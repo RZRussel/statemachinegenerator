@@ -1,0 +1,81 @@
+-- Module for modeling penguin's snowball actor --
+MODULE Snowball(world, owner)
+
+  DEFINE 
+    d_radius := 0;
+  	d_fly_velocity := 0;
+
+  VAR
+    x: 0..world.d_max_x; -- x position in the world --
+    y: 0..world.d_max_y; -- y position in the world --
+    fly_flag: boolean; -- flag states whether the snowball was thrown and active --
+    direction: 0..359; -- current flying direction --
+
+  -- initial state --
+  ASSIGN 
+    x := 0;
+    y := 0;
+    direction := 0;
+    fly_flag := FALSE;
+
+-- actions definition --
+
+-- Module for modeling penguin actor --
+MODULE Penguin(world, opponent)
+	
+  DEFINE
+  	d_move_velocity := 0;	-- all penguins can perform move action with const velocity
+  	d_radius := 0;			-- penguin's body is a circle with const radius
+  	d_stun_timer_max := 0;	-- time for which penguin freezes after got hit with a snowball
+  	d_pushing_index_max := 0; -- initial index in the pushing velocity array
+  	d_pushing_velocity := 0; -- initial velocity after push action
+  	d_pushing_timer_max := 0;  -- time during which penguin can't perform push action again
+  	d_snowball_timer_max := 0; -- time during which penguin can't perform throwing snowball again
+
+  VAR
+  	x: 0..world.d_max_x; -- current x penguin's position in the world
+  	y: 0..world.d_max_y; -- current y penguin's position in the world
+  	direction: 0..359; -- current pushing, pushed or moved direction
+  	stun_timer: 0..d_stun_timer_max; -- current remained time during which penguin can do nothing
+  	pushing_index: 0..d_pushing_index_max; -- current index of the pushing velocity in the array
+  	pushing_timer: 0..d_pushing_timer_max; -- current remained time during which penguin can't perform push action
+  	pushed_index: 0..world.d_penguin_pushed_index_max; -- current velocity index of the pushed penguin
+  	pushed_velocity: 0..world.d_penguin_pushed_velocity_max; -- initial velocity penguin received after the push
+    dead: boolean; -- flag states whether penguin dead
+    penguin_collision: unsigned word[1]; -- flags states whether there is a collision with i-th penguin
+  	snowball_collision: unsigned word[1]; -- flags states whether there is a collision with i-th snowball
+  	snowball_timer: 0..d_snowball_timer_max; -- current remained time during which a penguin can't perform throw action
+    s: Snowball(world, self); -- penguin's snoball reference
+
+-- actions definition --
+
+-- Module for modeling island actor --
+MODULE Island(world)
+  
+  DEFINE
+    d_center_x := 0; -- island's x position in the world
+    d_center_y := 0; -- island's y position in the world
+    d_small_radius := 0; -- island's elepsis body small radius
+    d_big_radius := 0; -- island's elepsis body big radius
+
+-- Module for modeling world actor --
+MODULE World
+
+  DEFINE
+  	d_max_x := 1024; -- 2D world's width
+  	d_max_y := 768; -- 2D world's height
+  	d_penguin_pushed_index_max := 0; -- maximum index penguin can have when pushed
+  	d_penguin_pushed_velocity_max := 0; -- maximum velocity penguin can have when pushed 
+
+  VAR
+  	i: Island(self); -- there is 1 island in the world
+    p1: Penguin(self, p2); -- there are 2 penguins in the world
+    p2: Penguin(self, p1);
+
+MODULE main  
+
+  VAR
+    world: World;
+
+  CTLSPEC
+    AG EF (world.p1.dead | world.p2.dead); -- from any game state there is an opportunity to finish the game
