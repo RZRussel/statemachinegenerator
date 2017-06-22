@@ -5,6 +5,32 @@ MODULE Snowball(world, owner)
     d_radius := 100;
   	d_fly_velocity := 12;
 
+  -- relations --
+  DEFINE
+    FlyOX := 
+      case
+        direction in 0..90 : 1;
+        TRUE : 0;
+      esac;
+
+    FlyOY := 
+      case
+        direction in 0..90 : 1;
+        TRUE : 0;
+      esac;
+
+    CollisionDetected := 
+      case
+        next(x) - next(owner.opponent.x) = 0 & next(y) - next(owner.opponent.y) = 0 : TRUE;
+        TRUE: FALSE;
+      esac;
+
+    DeadPointReached := 
+      case
+        next(x) = 0 & next(y) = 0 : TRUE;
+        TRUE : FALSE;
+      esac;
+
   VAR
     x: 0..world.d_max_x; -- x position in the world --
     y: 0..world.d_max_y; -- y position in the world --
@@ -19,19 +45,31 @@ MODULE Snowball(world, owner)
     fly_flag := FALSE;
 
   DEFINE
-    Deactive := !fly_flag & !next(fly_flag) & next(x) = x & next(y) = y 
+    Deact := !fly_flag & !next(fly_flag) & next(x) = x & next(y) = y 
       & next(direction) = direction;
 
-    Flying := fly_flag & !bool(owner.opponent.snowball_collision);
+    Fly := fly_flag & !bool(owner.opponent.snowball_collision) & next(x) = x + FlyOX & next(y) = y + FlyOY
+      & ((bool(next(owner.opponent.snowball_collision)) = CollisionDetected) & !next(owner.opponent.dead)
+          & next(fly_flag) | next(owner.opponent.snowball_collision) = owner.opponent.snowball_collision)
+      & next(fly_flag) = !DeadPointReached;
+
+    Collide := bool(owner.opponent.snowball_collision) & !next(bool(owner.opponent.snowball_collision))
+      & fly_flag & !owner.opponent.dead & !next(fly_flag)
+        & (owner.opponent.pushing_index = 0  & next(owner.opponent.stun_timer) = owner.opponent.d_stun_timer_max
+          | owner.opponent.pushing_index > 0);
 
   -- snowball's state possible transitions --
   TRANS
-    Deactive
+    Fly & !owner.Throw & !Deact & !Collide
+    | !Fly & owner.Throw & !Deact & !Collide
+    | !Fly & !owner.Throw & Deact & !Collide
+    | !Fly & !owner.Throw & !Deact & Collide;
 
 
 -- Module for modeling penguin actor --
 MODULE Penguin(world, opponent)
 	
+  -- constants --
   DEFINE
   	d_move_velocity := 54;	-- all penguins can perform move action with const velocity
   	d_radius := 270;			-- penguin's body is a circle with const radius
@@ -40,6 +78,40 @@ MODULE Penguin(world, opponent)
   	d_pushing_velocity := 50; -- initial velocity after push action
   	d_pushing_timer_max := 60;  -- time during which penguin can't perform push action again
   	d_snowball_timer_max := 60; -- time during which penguin can't perform throwing snowball again
+
+  -- relations --
+  DEFINE
+    MoveNext := 
+      next(direction) in 0..90 & next(x) = x + 0 & next(y) = y + 0
+      | next(direction) in 90..359 & next(x) = x + 1 & next(y) = y + 1;
+
+    SnowballInit :=
+      next(snowball.direction) in 0..90 & next(snowball.x) = x + 0 & next(snowball.y) = y + 0
+      | next(snowball.direction) in 90..359 & next(snowball.x) = x + 1 & next(snowball.y) = y + 1;
+    
+    PushingOx :=
+      case
+        pushing_index = d_pushing_index_max & direction in 0..20 : 1;
+        TRUE: 0;
+      esac;
+
+    PushingOy :=
+      case
+        pushing_index = d_pushing_index_max & direction in 0..20 : 1;
+        TRUE: 0;
+      esac;
+
+    CollisionDetected :=
+      case
+        next(x) - next(opponent.x) = 0 & next(y) - next(opponent.y) = 0 : TRUE;
+        TRUE: FALSE;
+      esac;
+
+    DeadPointReached := 
+      case
+        next(x) = 0 & next(y) = 0 : TRUE;
+        TRUE : FALSE;
+      esac;
 
   VAR
   	x: 0..world.d_max_x; -- current x penguin's position in the world
@@ -68,7 +140,49 @@ MODULE Penguin(world, opponent)
     snowball_collision := 0b_0;
     snowball_timer := 0;
 
--- actions definition --
+-- action definitions --
+  DEFINE
+    Move := !dead & stun_timer = 0 & pushing_index = 0 & pushed_index = 0
+      & !bool(penguin_collision) & !bool(snowball_collision)
+      & next(pushing_index) = 0 & next(pushed_index) = 0 & next(pushed_velocity) = pushed_velocity
+      & next(stun_timer) = 0 & snowball_timer < d_snowball_timer_max
+      & MoveNext & next(dead) = DeadPointReached
+      & (bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
+        | next(penguin_collision) = penguin_collision);
+
+    Throw := !dead & stun_timer = 0 & pushing_index = 0 & next(pushing_index) = 0
+      & !bool(penguin_collision) & !bool(snowball_collision)
+      & snowball_timer = 0 & next(snowball_timer) = d_snowball_timer_max
+      & (pushed_index > 0 | next(x) = x & next(y) = y)
+      & next(snowball.fly_flag) & SnowballInit
+      & (bool(next(penguin_collision)) = CollisionDetected & !next(opponent.dead) 
+        | next(penguin_collision) = penguin_collision);
+
+    Push := !dead & stun_timer = 0 & pushed_index = 0 & pushing_timer = 0
+      & !bool(penguin_collision) & !bool(snowball_collision)
+      & next(pushing_index) = d_pushing_index_max & next(pushing_timer) = d_pushing_timer_max
+      & next(x) = x & next(y) = y & next(pushed_index) = 0 & next(pushed_velocity) = pushed_velocity
+      & (bool(next(penguin_collision)) = CollisionDetected & !next(opponent.dead) 
+        | next(penguin_collision) = penguin_collision);
+
+    Stay := !dead & pushing_index = 0 & pushed_index = 0
+      & !bool(penguin_collision) & !bool(snowball_collision)
+      & next(x) = x & next(y) = y & next(pushing_index) = 0 & next(snowball_timer) < d_snowball_timer_max
+      & next(pushed_index) = 0 & next(pushed_velocity) = pushed_velocity
+      & (bool(next(penguin_collision)) = CollisionDetected & !next(opponent.dead) 
+        | next(penguin_collision) = penguin_collision);
+
+    Pushing := !dead & pushing_index > 0 & pushed_index = 0 & stun_timer = 0 & !bool(penguin_collision)
+      & next(pushing_index) = pushing_index - 1 & next(pushed_index) = 0
+      & next(pushed_velocity) = pushed_velocity & next(stun_timer) = 0 & next(snowball_timer) < d_snowball_timer_max
+      & next(direction) = direction & next(x) = x + PushingOx & next(y) = y + PushingOy
+      & next(dead) = DeadPointReached
+      & (bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
+        | next(penguin_collision) = penguin_collision);
+       
+
+  TRANS
+    Move & !Throw & ! Push & !Stay & !Pushing;
 
 -- Module for modeling island actor --
 MODULE Island(world)
@@ -97,6 +211,8 @@ MODULE main
 
   VAR
     world: World;
+
+  JUSTICE TRUE;
 
   CTLSPEC
     AG EF (world.p1.dead | world.p2.dead); -- from any game state there is an opportunity to finish the game
