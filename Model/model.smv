@@ -49,7 +49,7 @@ MODULE Snowball(world, owner)
       & next(direction) = direction;
 
     Fly := fly_flag & !bool(owner.opponent.snowball_collision) & next(x) = x + FlyOX & next(y) = y + FlyOY
-      & ((bool(next(owner.opponent.snowball_collision)) = CollisionDetected) & !next(owner.opponent.dead)
+      & (bool(next(owner.opponent.snowball_collision)) = CollisionDetected & !next(owner.opponent.dead)
           & next(fly_flag) | next(owner.opponent.snowball_collision) = owner.opponent.snowball_collision)
       & next(fly_flag) = !DeadPointReached;
 
@@ -99,6 +99,92 @@ MODULE Penguin(world, opponent)
       case
         pushing_index = d_pushing_index_max & direction in 0..20 : 1;
         TRUE: 0;
+      esac;
+
+    PushedOx :=
+      case
+        pushed_velocity = 10 & pushed_index = 5 & direction in 0..20 : 1;
+        TRUE: 0;
+      esac;
+
+    PushedOy :=
+      case
+        pushed_velocity = 10 & pushed_index = 5 & direction in 0..20 : 1;
+        TRUE: 0;
+      esac;
+
+    PushedVelocity :=
+      case
+        pushed_index = 10 & pushed_velocity = 10 : 1;
+        TRUE: 0;
+      esac;
+
+    PushedInitIndex :=
+      case
+        next(pushed_velocity) = 10: 10;
+        TRUE: 9;
+      esac;
+
+    CollisionStaticStatic :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0 : (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionStaticPushing :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0 
+          & opponent.pushing_index = 10: (0d10_1 :: 0d10_0);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionStaticPushed :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0 
+          & opponent.PushedVelocity = 10: (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionPushingStatic :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0
+          & pushing_index = 10 : (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionPushingPushing :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0 
+          & pushing_index = 10 & opponent.pushing_index = 10: (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionPushingPushed :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0 
+          & pushing_index = 10 & opponent.PushedVelocity = 10: (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionPushedStatic :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0
+          & PushedVelocity = 10 : (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionPushedPushing :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0 
+          & PushedVelocity = 10 & opponent.pushing_index = 10: (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
+      esac;
+
+    CollisionPushedPushed :=
+      case
+        x - opponent.x = 1 & y - opponent.y = 1 & direction = 0 & opponent.direction = 0 
+          & PushedVelocity = 10 & opponent.PushedVelocity = 10: (0d10_1 :: 0d10_1);
+        TRUE: (0d10_1 :: 0d10_1);
       esac;
 
     CollisionDetected :=
@@ -172,6 +258,12 @@ MODULE Penguin(world, opponent)
       & (bool(next(penguin_collision)) = CollisionDetected & !next(opponent.dead) 
         | next(penguin_collision) = penguin_collision);
 
+    Dead := dead & next(dead) & next(x) = x & next(y) = y & next(direction) = direction
+      & next(pushing_index) = pushing_index & next(pushed_index) = pushed_index
+      & next(pushed_velocity) = pushed_velocity & next(penguin_collision) = penguin_collision
+      & next(snowball_collision) = snowball_collision & next(stun_timer) < d_stun_timer_max
+      & next(snowball_timer) < d_snowball_timer_max & next(pushing_timer) < d_pushing_timer_max;
+
     Pushing := !dead & pushing_index > 0 & pushed_index = 0 & stun_timer = 0 & !bool(penguin_collision)
       & next(pushing_index) = pushing_index - 1 & next(pushed_index) = 0
       & next(pushed_velocity) = pushed_velocity & next(stun_timer) = 0 & next(snowball_timer) < d_snowball_timer_max
@@ -179,10 +271,67 @@ MODULE Penguin(world, opponent)
       & next(dead) = DeadPointReached
       & (bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
         | next(penguin_collision) = penguin_collision);
-       
+    
+    Pushed := !dead & pushing_index = 0 & pushed_index > 0 & !bool(penguin_collision)
+      & next(pushed_index) = pushed_index - 1 & next(pushed_velocity) = pushed_velocity
+      & next(pushing_index) = pushing_index & next(pushing_timer) < d_pushing_timer_max & next(direction) = direction
+      & next(x) = x + PushedOx & next(y) = y + PushedOy
+      & next(dead) = DeadPointReached
+      & (bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
+        | next(penguin_collision) = penguin_collision);
+
+    Collide := bool(penguin_collision) & !bool(next(penguin_collision)) & !dead & !(opponent.dead)
+      & ((pushing_index = 0 & pushed_index = 0
+          & ((opponent.pushing_index = 0 & opponent.pushed_index = 0 
+              & next(direction) = toint(CollisionStaticStatic[9:0]) & next(pushed_velocity) = toint(CollisionStaticStatic[19:10])
+              & next(pushed_index) = PushedInitIndex)
+          | (opponent.pushing_index > 0 & opponent.pushed_index = 0
+              & next(direction) = toint(CollisionStaticPushing[9:0]) & next(pushed_velocity) = toint(CollisionStaticPushing[19:10])
+              & next(pushed_index) = PushedInitIndex)
+          | (opponent.pushing_index = 0 & opponent.pushed_index > 0
+              & next(direction) = toint(CollisionStaticPushed[9:0]) & next(pushed_velocity) = toint(CollisionStaticPushed[19:10])
+              & next(pushed_index) = PushedInitIndex)))
+      | (pushing_index > 0 & pushed_index = 0
+          & ((opponent.pushing_index = 0 & opponent.pushed_index = 0 
+              & next(direction) = toint(CollisionPushingStatic[9:0]) & next(pushed_velocity) = toint(CollisionPushingStatic[19:10])
+              & next(pushed_index) = PushedInitIndex)
+          | (opponent.pushing_index > 0 & opponent.pushed_index = 0
+              & next(direction) = toint(CollisionPushingPushing[9:0]) & next(pushed_velocity) = toint(CollisionPushingPushing[19:10])
+              & next(pushed_index) = PushedInitIndex)
+          | (opponent.pushing_index = 0 & opponent.pushed_index > 0
+              & next(direction) = toint(CollisionPushingPushed[9:0]) & next(pushed_velocity) = toint(CollisionPushingPushed[19:10])
+              & next(pushed_index) = PushedInitIndex)))
+      | (pushing_index = 0 & pushed_index > 0
+          & ((opponent.pushing_index = 0 & opponent.pushed_index = 0 
+              & next(direction) = toint(CollisionPushedStatic[9:0]) & next(pushed_velocity) = toint(CollisionPushedStatic[19:10])
+              & next(pushed_index) = PushedInitIndex)
+          | (opponent.pushing_index > 0 & opponent.pushed_index = 0
+              & next(direction) = toint(CollisionPushedPushing[9:0]) & next(pushed_velocity) = toint(CollisionPushedPushing[19:10])
+              & next(pushed_index) = PushedInitIndex)
+          | (opponent.pushing_index = 0 & opponent.pushed_index > 0
+              & next(direction) = toint(CollisionPushedPushed[9:0]) & next(pushed_velocity) = toint(CollisionPushedPushed[19:10])
+              & next(pushed_index) = PushedInitIndex))))
+      & next(pushing_index) = 0;
+
+    TickStunTimer := stun_timer = 0 & (next(stun_timer) = 0 | next(stun_timer) = d_stun_timer_max)
+      | stun_timer > 0 & (next(stun_timer) = stun_timer - 1 | next(stun_timer) = d_stun_timer_max);
+
+    TickPushingTimer := pushing_timer = 0 & (next(pushing_timer) = 0 | next(pushing_timer) = d_pushing_timer_max)
+      | pushing_timer > 0 & next(pushing_timer) = pushing_timer - 1;
+
+    TickBallTimer := snowball_timer = 0 & (next(snowball_timer) = 0 | next(snowball_timer) = d_snowball_timer_max)
+      | snowball_timer > 0 & next(snowball_timer) = snowball_timer - 1;
 
   TRANS
-    Move & !Throw & ! Push & !Stay & !Pushing;
+    (Move & !Throw & !Push & !Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
+      | !Move & Throw & !Push & !Stay & !Pushing & !snowball.Collide & !Collide & !Dead
+      | !Move & !Throw & Push & !Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
+      | !Move & !Throw & !Push & Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
+      | !Move & !Throw & !Push & !Stay & Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
+      | !Move & !Push & !Stay & !Pushing & Pushed & !snowball.Collide & !Collide & !Dead
+      | !Move & !Throw & !Push & !Stay & !Pushing & !Pushed & (snowball.Collide | Collide) & !Dead
+      | !Move & !Throw & !Push & !Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & Dead)
+    & TickStunTimer & TickPushingTimer & TickBallTimer;
 
 -- Module for modeling island actor --
 MODULE Island(world)
