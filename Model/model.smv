@@ -82,8 +82,12 @@ MODULE Penguin(world, opponent)
   -- relations --
   DEFINE
     MoveNext := 
-      next(direction) in 0..90 & next(x) = x + 0 & next(y) = y + 0
-      | next(direction) in 90..359 & next(x) = x + 1 & next(y) = y + 1;
+      next(direction) in 0..44 & next(x) = x + 7 & next(y) = y
+      | next(direction) in 45..89 & next(x) = x + 7 & next(y) = y + 7
+      | next(direction) in 90..134 & next(x) = x - 7 & next(y) = y + 7
+      | next(direction) in 135..180 & next(x) = x - 7 & next(y) = y
+      | next(direction) in 181..269 & next(x) = x - 7 & next(y) = y - 7
+      | next(direction) in 270..359 & next(x) = x + 7 & next(y) = y - 7;
 
     SnowballInit :=
       next(snowball.direction) in 0..90 & next(snowball.x) = x + 0 & next(snowball.y) = y + 0
