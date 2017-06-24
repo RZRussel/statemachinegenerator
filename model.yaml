@@ -1,0 +1,27 @@
+# Yaml model for Penguin Clash Game
+
+world:
+   max_x: 7360
+   max_y: 4140
+
+island:
+   center_x: 3680
+   center_y: 2070
+   small_radius: 1625
+   big_radius: 2515
+   friction: 0.6
+
+penguin:
+  mass: 10
+  move_velocity: 54
+  radius: 270
+  stun_timer_max: 30
+  pushing_index_max: 10
+  pushing_velocity: 50
+  pushing_timer_max: 60
+  snowball_timer_max: 60
+
+snowball:
+  mass: 1
+  radius: 100
+  fly_velocity: 12
