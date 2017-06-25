@@ -81,7 +81,7 @@ class ExpressionDefinitionBuilder(BaseDefinitionBuilder):
     def build(self):
         if not isinstance(self.content(), str):
             raise Exception("Expression string must be set before building")
-        return self.name() + " := " + self.content()
+        return self.name() + " := " + self.content()+";"
 
 
 class CaseDefinitionBuilder(BaseDefinitionBuilder):
@@ -107,5 +107,5 @@ class CaseDefinitionBuilder(BaseDefinitionBuilder):
         defstr = "case\n"
         for expression, result in self.content().items():
             defstr += "  " + expression + " : " + result + ";\n"
-        defstr += "end;"
+        defstr += "esac;"
         return self.name() + " :=\n" + defstr

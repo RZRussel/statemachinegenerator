@@ -7,17 +7,111 @@ MODULE Snowball(world, owner)
 
   -- relations --
   DEFINE
-    FlyOX := 
-      case
-        direction in 0..90 : 1;
-        TRUE : 0;
-      esac;
+    FlyOX :=
+case
+  direction in 0..16 : 12;
+  direction in 17..28 : 11;
+  direction in 29..37 : 10;
+  direction in 38..44 : 9;
+  direction in 45..51 : 8;
+  direction in 52..57 : 7;
+  direction in 58..62 : 6;
+  direction in 63..67 : 5;
+  direction in 68..73 : 4;
+  direction in 74..77 : 3;
+  direction in 78..82 : 2;
+  direction in 83..87 : 1;
+  direction in 88..92 : 0;
+  direction in 93..97 : -1;
+  direction in 98..102 : -2;
+  direction in 103..106 : -3;
+  direction in 107..112 : -4;
+  direction in 113..117 : -5;
+  direction in 118..122 : -6;
+  direction in 123..128 : -7;
+  direction in 129..135 : -8;
+  direction in 136..142 : -9;
+  direction in 143..151 : -10;
+  direction in 152..163 : -11;
+  direction in 164..196 : -12;
+  direction in 197..208 : -11;
+  direction in 209..217 : -10;
+  direction in 218..224 : -9;
+  direction in 225..231 : -8;
+  direction in 232..237 : -7;
+  direction in 238..242 : -6;
+  direction in 243..247 : -5;
+  direction in 248..253 : -4;
+  direction in 254..257 : -3;
+  direction in 258..262 : -2;
+  direction in 263..267 : -1;
+  direction in 268..272 : 0;
+  direction in 273..277 : 1;
+  direction in 278..282 : 2;
+  direction in 283..286 : 3;
+  direction in 287..292 : 4;
+  direction in 293..297 : 5;
+  direction in 298..302 : 6;
+  direction in 303..308 : 7;
+  direction in 309..315 : 8;
+  direction in 316..322 : 9;
+  direction in 323..331 : 10;
+  direction in 332..343 : 11;
+  direction in 344..359 : 12;
+esac;
 
-    FlyOY := 
-      case
-        direction in 0..90 : 1;
-        TRUE : 0;
-      esac;
+    FlyOY :=
+case
+  direction in 0..2 : 0;
+  direction in 3..7 : 1;
+  direction in 8..12 : 2;
+  direction in 13..16 : 3;
+  direction in 17..22 : 4;
+  direction in 23..27 : 5;
+  direction in 28..32 : 6;
+  direction in 33..38 : 7;
+  direction in 39..45 : 8;
+  direction in 46..52 : 9;
+  direction in 53..61 : 10;
+  direction in 62..73 : 11;
+  direction in 74..106 : 12;
+  direction in 107..118 : 11;
+  direction in 119..127 : 10;
+  direction in 128..134 : 9;
+  direction in 135..141 : 8;
+  direction in 142..147 : 7;
+  direction in 148..152 : 6;
+  direction in 153..157 : 5;
+  direction in 158..163 : 4;
+  direction in 164..167 : 3;
+  direction in 168..172 : 2;
+  direction in 173..177 : 1;
+  direction in 178..182 : 0;
+  direction in 183..187 : -1;
+  direction in 188..192 : -2;
+  direction in 193..196 : -3;
+  direction in 197..202 : -4;
+  direction in 203..207 : -5;
+  direction in 208..212 : -6;
+  direction in 213..218 : -7;
+  direction in 219..225 : -8;
+  direction in 226..232 : -9;
+  direction in 233..241 : -10;
+  direction in 242..253 : -11;
+  direction in 254..286 : -12;
+  direction in 287..298 : -11;
+  direction in 299..307 : -10;
+  direction in 308..314 : -9;
+  direction in 315..321 : -8;
+  direction in 322..327 : -7;
+  direction in 328..332 : -6;
+  direction in 333..337 : -5;
+  direction in 338..343 : -4;
+  direction in 344..347 : -3;
+  direction in 348..352 : -2;
+  direction in 353..357 : -1;
+  direction in 358..359 : 0;
+esac;
 
     CollisionDetected := 
       case
@@ -74,20 +168,371 @@ MODULE Penguin(world, opponent)
   	d_move_velocity := 54;	-- all penguins can perform move action with const velocity
   	d_radius := 270;			-- penguin's body is a circle with const radius
   	d_stun_timer_max := 30;	-- time for which penguin freezes after got hit with a snowball
-  	d_pushing_index_max := 10; -- initial index in the pushing velocity array
+  	d_pushing_index_max := 20; -- initial index in the pushing velocity array
   	d_pushing_velocity := 50; -- initial velocity after push action
   	d_pushing_timer_max := 60;  -- time during which penguin can't perform push action again
   	d_snowball_timer_max := 60; -- time during which penguin can't perform throwing snowball again
 
   -- relations --
   DEFINE
-    MoveNext := 
-      next(direction) in 0..44 & next(x) = x + 7 & next(y) = y
-      | next(direction) in 45..89 & next(x) = x + 7 & next(y) = y + 7
-      | next(direction) in 90..134 & next(x) = x - 7 & next(y) = y + 7
-      | next(direction) in 135..180 & next(x) = x - 7 & next(y) = y
-      | next(direction) in 181..269 & next(x) = x - 7 & next(y) = y - 7
-      | next(direction) in 270..359 & next(x) = x + 7 & next(y) = y - 7;
+    MoveNext := direction = 0 & next(x) = 54 & next(y) = 0
+ | direction = 1 & next(x) = 54 & next(y) = 1
+ | direction = 2 & next(x) = 54 & next(y) = 2
+ | direction = 3 & next(x) = 54 & next(y) = 3
+ | direction = 4 & next(x) = 54 & next(y) = 4
+ | direction = 5 & next(x) = 54 & next(y) = 5
+ | direction = 6 & next(x) = 54 & next(y) = 6
+ | direction = 7 & next(x) = 54 & next(y) = 7
+ | direction = 8 & next(x) = 53 & next(y) = 8
+ | direction = 9 & next(x) = 53 & next(y) = 8
+ | direction = 10 & next(x) = 53 & next(y) = 9
+ | direction = 11 & next(x) = 53 & next(y) = 10
+ | direction = 12 & next(x) = 53 & next(y) = 11
+ | direction = 13 & next(x) = 53 & next(y) = 12
+ | direction = 14 & next(x) = 52 & next(y) = 13
+ | direction = 15 & next(x) = 52 & next(y) = 14
+ | direction = 16 & next(x) = 52 & next(y) = 15
+ | direction = 17 & next(x) = 52 & next(y) = 16
+ | direction = 18 & next(x) = 51 & next(y) = 17
+ | direction = 19 & next(x) = 51 & next(y) = 18
+ | direction = 20 & next(x) = 51 & next(y) = 18
+ | direction = 21 & next(x) = 50 & next(y) = 19
+ | direction = 22 & next(x) = 50 & next(y) = 20
+ | direction = 23 & next(x) = 50 & next(y) = 21
+ | direction = 24 & next(x) = 49 & next(y) = 22
+ | direction = 25 & next(x) = 49 & next(y) = 23
+ | direction = 26 & next(x) = 49 & next(y) = 24
+ | direction = 27 & next(x) = 48 & next(y) = 25
+ | direction = 28 & next(x) = 48 & next(y) = 25
+ | direction = 29 & next(x) = 47 & next(y) = 26
+ | direction = 30 & next(x) = 47 & next(y) = 27
+ | direction = 31 & next(x) = 46 & next(y) = 28
+ | direction = 32 & next(x) = 46 & next(y) = 29
+ | direction = 33 & next(x) = 45 & next(y) = 29
+ | direction = 34 & next(x) = 45 & next(y) = 30
+ | direction = 35 & next(x) = 44 & next(y) = 31
+ | direction = 36 & next(x) = 44 & next(y) = 32
+ | direction = 37 & next(x) = 43 & next(y) = 32
+ | direction = 38 & next(x) = 43 & next(y) = 33
+ | direction = 39 & next(x) = 42 & next(y) = 34
+ | direction = 40 & next(x) = 41 & next(y) = 35
+ | direction = 41 & next(x) = 41 & next(y) = 35
+ | direction = 42 & next(x) = 40 & next(y) = 36
+ | direction = 43 & next(x) = 39 & next(y) = 37
+ | direction = 44 & next(x) = 39 & next(y) = 38
+ | direction in 45..46 & next(x) = 38 & next(y) = 38
+ | direction = 47 & next(x) = 37 & next(y) = 39
+ | direction = 48 & next(x) = 36 & next(y) = 40
+ | direction = 49 & next(x) = 35 & next(y) = 41
+ | direction = 50 & next(x) = 35 & next(y) = 41
+ | direction = 51 & next(x) = 34 & next(y) = 42
+ | direction = 52 & next(x) = 33 & next(y) = 43
+ | direction = 53 & next(x) = 32 & next(y) = 43
+ | direction = 54 & next(x) = 32 & next(y) = 44
+ | direction = 55 & next(x) = 31 & next(y) = 44
+ | direction = 56 & next(x) = 30 & next(y) = 45
+ | direction = 57 & next(x) = 29 & next(y) = 45
+ | direction = 58 & next(x) = 29 & next(y) = 46
+ | direction = 59 & next(x) = 28 & next(y) = 46
+ | direction = 60 & next(x) = 27 & next(y) = 47
+ | direction = 61 & next(x) = 26 & next(y) = 47
+ | direction = 62 & next(x) = 25 & next(y) = 48
+ | direction = 63 & next(x) = 25 & next(y) = 48
+ | direction = 64 & next(x) = 24 & next(y) = 49
+ | direction = 65 & next(x) = 23 & next(y) = 49
+ | direction = 66 & next(x) = 22 & next(y) = 49
+ | direction = 67 & next(x) = 21 & next(y) = 50
+ | direction = 68 & next(x) = 20 & next(y) = 50
+ | direction = 69 & next(x) = 19 & next(y) = 50
+ | direction = 70 & next(x) = 18 & next(y) = 51
+ | direction = 71 & next(x) = 18 & next(y) = 51
+ | direction = 72 & next(x) = 17 & next(y) = 51
+ | direction = 73 & next(x) = 16 & next(y) = 52
+ | direction = 74 & next(x) = 15 & next(y) = 52
+ | direction = 75 & next(x) = 14 & next(y) = 52
+ | direction = 76 & next(x) = 13 & next(y) = 52
+ | direction = 77 & next(x) = 12 & next(y) = 53
+ | direction = 78 & next(x) = 11 & next(y) = 53
+ | direction = 79 & next(x) = 10 & next(y) = 53
+ | direction = 80 & next(x) = 9 & next(y) = 53
+ | direction = 81 & next(x) = 8 & next(y) = 53
+ | direction = 82 & next(x) = 8 & next(y) = 53
+ | direction = 83 & next(x) = 7 & next(y) = 54
+ | direction = 84 & next(x) = 6 & next(y) = 54
+ | direction = 85 & next(x) = 5 & next(y) = 54
+ | direction = 86 & next(x) = 4 & next(y) = 54
+ | direction = 87 & next(x) = 3 & next(y) = 54
+ | direction = 88 & next(x) = 2 & next(y) = 54
+ | direction = 89 & next(x) = 1 & next(y) = 54
+ | direction = 90 & next(x) = 0 & next(y) = 54
+ | direction = 91 & next(x) = -1 & next(y) = 54
+ | direction = 92 & next(x) = -2 & next(y) = 54
+ | direction = 93 & next(x) = -3 & next(y) = 54
+ | direction = 94 & next(x) = -4 & next(y) = 54
+ | direction = 95 & next(x) = -5 & next(y) = 54
+ | direction = 96 & next(x) = -6 & next(y) = 54
+ | direction = 97 & next(x) = -7 & next(y) = 54
+ | direction = 98 & next(x) = -8 & next(y) = 53
+ | direction = 99 & next(x) = -8 & next(y) = 53
+ | direction = 100 & next(x) = -9 & next(y) = 53
+ | direction = 101 & next(x) = -10 & next(y) = 53
+ | direction = 102 & next(x) = -11 & next(y) = 53
+ | direction = 103 & next(x) = -12 & next(y) = 53
+ | direction = 104 & next(x) = -13 & next(y) = 52
+ | direction = 105 & next(x) = -14 & next(y) = 52
+ | direction = 106 & next(x) = -15 & next(y) = 52
+ | direction = 107 & next(x) = -16 & next(y) = 52
+ | direction = 108 & next(x) = -17 & next(y) = 51
+ | direction = 109 & next(x) = -18 & next(y) = 51
+ | direction = 110 & next(x) = -18 & next(y) = 51
+ | direction = 111 & next(x) = -19 & next(y) = 50
+ | direction = 112 & next(x) = -20 & next(y) = 50
+ | direction = 113 & next(x) = -21 & next(y) = 50
+ | direction = 114 & next(x) = -22 & next(y) = 49
+ | direction = 115 & next(x) = -23 & next(y) = 49
+ | direction = 116 & next(x) = -24 & next(y) = 49
+ | direction = 117 & next(x) = -25 & next(y) = 48
+ | direction = 118 & next(x) = -25 & next(y) = 48
+ | direction = 119 & next(x) = -26 & next(y) = 47
+ | direction = 120 & next(x) = -27 & next(y) = 47
+ | direction = 121 & next(x) = -28 & next(y) = 46
+ | direction = 122 & next(x) = -29 & next(y) = 46
+ | direction = 123 & next(x) = -29 & next(y) = 45
+ | direction = 124 & next(x) = -30 & next(y) = 45
+ | direction = 125 & next(x) = -31 & next(y) = 44
+ | direction = 126 & next(x) = -32 & next(y) = 44
+ | direction = 127 & next(x) = -32 & next(y) = 43
+ | direction = 128 & next(x) = -33 & next(y) = 43
+ | direction = 129 & next(x) = -34 & next(y) = 42
+ | direction = 130 & next(x) = -35 & next(y) = 41
+ | direction = 131 & next(x) = -35 & next(y) = 41
+ | direction = 132 & next(x) = -36 & next(y) = 40
+ | direction = 133 & next(x) = -37 & next(y) = 39
+ | direction = 134 & next(x) = -38 & next(y) = 39
+ | direction = 135 & next(x) = -38 & next(y) = 38
+ | direction = 136 & next(x) = -39 & next(y) = 38
+ | direction = 137 & next(x) = -39 & next(y) = 37
+ | direction = 138 & next(x) = -40 & next(y) = 36
+ | direction = 139 & next(x) = -41 & next(y) = 35
+ | direction = 140 & next(x) = -41 & next(y) = 35
+ | direction = 141 & next(x) = -42 & next(y) = 34
+ | direction = 142 & next(x) = -43 & next(y) = 33
+ | direction = 143 & next(x) = -43 & next(y) = 32
+ | direction = 144 & next(x) = -44 & next(y) = 32
+ | direction = 145 & next(x) = -44 & next(y) = 31
+ | direction = 146 & next(x) = -45 & next(y) = 30
+ | direction = 147 & next(x) = -45 & next(y) = 29
+ | direction = 148 & next(x) = -46 & next(y) = 29
+ | direction = 149 & next(x) = -46 & next(y) = 28
+ | direction = 150 & next(x) = -47 & next(y) = 27
+ | direction = 151 & next(x) = -47 & next(y) = 26
+ | direction = 152 & next(x) = -48 & next(y) = 25
+ | direction = 153 & next(x) = -48 & next(y) = 25
+ | direction = 154 & next(x) = -49 & next(y) = 24
+ | direction = 155 & next(x) = -49 & next(y) = 23
+ | direction = 156 & next(x) = -49 & next(y) = 22
+ | direction = 157 & next(x) = -50 & next(y) = 21
+ | direction = 158 & next(x) = -50 & next(y) = 20
+ | direction = 159 & next(x) = -50 & next(y) = 19
+ | direction = 160 & next(x) = -51 & next(y) = 18
+ | direction = 161 & next(x) = -51 & next(y) = 18
+ | direction = 162 & next(x) = -51 & next(y) = 17
+ | direction = 163 & next(x) = -52 & next(y) = 16
+ | direction = 164 & next(x) = -52 & next(y) = 15
+ | direction = 165 & next(x) = -52 & next(y) = 14
+ | direction = 166 & next(x) = -52 & next(y) = 13
+ | direction = 167 & next(x) = -53 & next(y) = 12
+ | direction = 168 & next(x) = -53 & next(y) = 11
+ | direction = 169 & next(x) = -53 & next(y) = 10
+ | direction = 170 & next(x) = -53 & next(y) = 9
+ | direction = 171 & next(x) = -53 & next(y) = 8
+ | direction = 172 & next(x) = -53 & next(y) = 8
+ | direction = 173 & next(x) = -54 & next(y) = 7
+ | direction = 174 & next(x) = -54 & next(y) = 6
+ | direction = 175 & next(x) = -54 & next(y) = 5
+ | direction = 176 & next(x) = -54 & next(y) = 4
+ | direction = 177 & next(x) = -54 & next(y) = 3
+ | direction = 178 & next(x) = -54 & next(y) = 2
+ | direction = 179 & next(x) = -54 & next(y) = 1
+ | direction = 180 & next(x) = -54 & next(y) = 0
+ | direction = 181 & next(x) = -54 & next(y) = -1
+ | direction = 182 & next(x) = -54 & next(y) = -2
+ | direction = 183 & next(x) = -54 & next(y) = -3
+ | direction = 184 & next(x) = -54 & next(y) = -4
+ | direction = 185 & next(x) = -54 & next(y) = -5
+ | direction = 186 & next(x) = -54 & next(y) = -6
+ | direction = 187 & next(x) = -54 & next(y) = -7
+ | direction = 188 & next(x) = -53 & next(y) = -8
+ | direction = 189 & next(x) = -53 & next(y) = -8
+ | direction = 190 & next(x) = -53 & next(y) = -9
+ | direction = 191 & next(x) = -53 & next(y) = -10
+ | direction = 192 & next(x) = -53 & next(y) = -11
+ | direction = 193 & next(x) = -53 & next(y) = -12
+ | direction = 194 & next(x) = -52 & next(y) = -13
+ | direction = 195 & next(x) = -52 & next(y) = -14
+ | direction = 196 & next(x) = -52 & next(y) = -15
+ | direction = 197 & next(x) = -52 & next(y) = -16
+ | direction = 198 & next(x) = -51 & next(y) = -17
+ | direction = 199 & next(x) = -51 & next(y) = -18
+ | direction = 200 & next(x) = -51 & next(y) = -18
+ | direction = 201 & next(x) = -50 & next(y) = -19
+ | direction = 202 & next(x) = -50 & next(y) = -20
+ | direction = 203 & next(x) = -50 & next(y) = -21
+ | direction = 204 & next(x) = -49 & next(y) = -22
+ | direction = 205 & next(x) = -49 & next(y) = -23
+ | direction = 206 & next(x) = -49 & next(y) = -24
+ | direction = 207 & next(x) = -48 & next(y) = -25
+ | direction = 208 & next(x) = -48 & next(y) = -25
+ | direction = 209 & next(x) = -47 & next(y) = -26
+ | direction = 210 & next(x) = -47 & next(y) = -27
+ | direction = 211 & next(x) = -46 & next(y) = -28
+ | direction = 212 & next(x) = -46 & next(y) = -29
+ | direction = 213 & next(x) = -45 & next(y) = -29
+ | direction = 214 & next(x) = -45 & next(y) = -30
+ | direction = 215 & next(x) = -44 & next(y) = -31
+ | direction = 216 & next(x) = -44 & next(y) = -32
+ | direction = 217 & next(x) = -43 & next(y) = -32
+ | direction = 218 & next(x) = -43 & next(y) = -33
+ | direction = 219 & next(x) = -42 & next(y) = -34
+ | direction = 220 & next(x) = -41 & next(y) = -35
+ | direction = 221 & next(x) = -41 & next(y) = -35
+ | direction = 222 & next(x) = -40 & next(y) = -36
+ | direction = 223 & next(x) = -39 & next(y) = -37
+ | direction = 224 & next(x) = -39 & next(y) = -38
+ | direction in 225..226 & next(x) = -38 & next(y) = -38
+ | direction = 227 & next(x) = -37 & next(y) = -39
+ | direction = 228 & next(x) = -36 & next(y) = -40
+ | direction = 229 & next(x) = -35 & next(y) = -41
+ | direction = 230 & next(x) = -35 & next(y) = -41
+ | direction = 231 & next(x) = -34 & next(y) = -42
+ | direction = 232 & next(x) = -33 & next(y) = -43
+ | direction = 233 & next(x) = -32 & next(y) = -43
+ | direction = 234 & next(x) = -32 & next(y) = -44
+ | direction = 235 & next(x) = -31 & next(y) = -44
+ | direction = 236 & next(x) = -30 & next(y) = -45
+ | direction = 237 & next(x) = -29 & next(y) = -45
+ | direction = 238 & next(x) = -29 & next(y) = -46
+ | direction = 239 & next(x) = -28 & next(y) = -46
+ | direction = 240 & next(x) = -27 & next(y) = -47
+ | direction = 241 & next(x) = -26 & next(y) = -47
+ | direction = 242 & next(x) = -25 & next(y) = -48
+ | direction = 243 & next(x) = -25 & next(y) = -48
+ | direction = 244 & next(x) = -24 & next(y) = -49
+ | direction = 245 & next(x) = -23 & next(y) = -49
+ | direction = 246 & next(x) = -22 & next(y) = -49
+ | direction = 247 & next(x) = -21 & next(y) = -50
+ | direction = 248 & next(x) = -20 & next(y) = -50
+ | direction = 249 & next(x) = -19 & next(y) = -50
+ | direction = 250 & next(x) = -18 & next(y) = -51
+ | direction = 251 & next(x) = -18 & next(y) = -51
+ | direction = 252 & next(x) = -17 & next(y) = -51
+ | direction = 253 & next(x) = -16 & next(y) = -52
+ | direction = 254 & next(x) = -15 & next(y) = -52
+ | direction = 255 & next(x) = -14 & next(y) = -52
+ | direction = 256 & next(x) = -13 & next(y) = -52
+ | direction = 257 & next(x) = -12 & next(y) = -53
+ | direction = 258 & next(x) = -11 & next(y) = -53
+ | direction = 259 & next(x) = -10 & next(y) = -53
+ | direction = 260 & next(x) = -9 & next(y) = -53
+ | direction = 261 & next(x) = -8 & next(y) = -53
+ | direction = 262 & next(x) = -8 & next(y) = -53
+ | direction = 263 & next(x) = -7 & next(y) = -54
+ | direction = 264 & next(x) = -6 & next(y) = -54
+ | direction = 265 & next(x) = -5 & next(y) = -54
+ | direction = 266 & next(x) = -4 & next(y) = -54
+ | direction = 267 & next(x) = -3 & next(y) = -54
+ | direction = 268 & next(x) = -2 & next(y) = -54
+ | direction = 269 & next(x) = -1 & next(y) = -54
+ | direction = 270 & next(x) = 0 & next(y) = -54
+ | direction = 271 & next(x) = 1 & next(y) = -54
+ | direction = 272 & next(x) = 2 & next(y) = -54
+ | direction = 273 & next(x) = 3 & next(y) = -54
+ | direction = 274 & next(x) = 4 & next(y) = -54
+ | direction = 275 & next(x) = 5 & next(y) = -54
+ | direction = 276 & next(x) = 6 & next(y) = -54
+ | direction = 277 & next(x) = 7 & next(y) = -54
+ | direction = 278 & next(x) = 8 & next(y) = -53
+ | direction = 279 & next(x) = 8 & next(y) = -53
+ | direction = 280 & next(x) = 9 & next(y) = -53
+ | direction = 281 & next(x) = 10 & next(y) = -53
+ | direction = 282 & next(x) = 11 & next(y) = -53
+ | direction = 283 & next(x) = 12 & next(y) = -53
+ | direction = 284 & next(x) = 13 & next(y) = -52
+ | direction = 285 & next(x) = 14 & next(y) = -52
+ | direction = 286 & next(x) = 15 & next(y) = -52
+ | direction = 287 & next(x) = 16 & next(y) = -52
+ | direction = 288 & next(x) = 17 & next(y) = -51
+ | direction = 289 & next(x) = 18 & next(y) = -51
+ | direction = 290 & next(x) = 18 & next(y) = -51
+ | direction = 291 & next(x) = 19 & next(y) = -50
+ | direction = 292 & next(x) = 20 & next(y) = -50
+ | direction = 293 & next(x) = 21 & next(y) = -50
+ | direction = 294 & next(x) = 22 & next(y) = -49
+ | direction = 295 & next(x) = 23 & next(y) = -49
+ | direction = 296 & next(x) = 24 & next(y) = -49
+ | direction = 297 & next(x) = 25 & next(y) = -48
+ | direction = 298 & next(x) = 25 & next(y) = -48
+ | direction = 299 & next(x) = 26 & next(y) = -47
+ | direction = 300 & next(x) = 27 & next(y) = -47
+ | direction = 301 & next(x) = 28 & next(y) = -46
+ | direction = 302 & next(x) = 29 & next(y) = -46
+ | direction = 303 & next(x) = 29 & next(y) = -45
+ | direction = 304 & next(x) = 30 & next(y) = -45
+ | direction = 305 & next(x) = 31 & next(y) = -44
+ | direction = 306 & next(x) = 32 & next(y) = -44
+ | direction = 307 & next(x) = 32 & next(y) = -43
+ | direction = 308 & next(x) = 33 & next(y) = -43
+ | direction = 309 & next(x) = 34 & next(y) = -42
+ | direction = 310 & next(x) = 35 & next(y) = -41
+ | direction = 311 & next(x) = 35 & next(y) = -41
+ | direction = 312 & next(x) = 36 & next(y) = -40
+ | direction = 313 & next(x) = 37 & next(y) = -39
+ | direction = 314 & next(x) = 38 & next(y) = -39
+ | direction = 315 & next(x) = 38 & next(y) = -38
+ | direction = 316 & next(x) = 39 & next(y) = -38
+ | direction = 317 & next(x) = 39 & next(y) = -37
+ | direction = 318 & next(x) = 40 & next(y) = -36
+ | direction = 319 & next(x) = 41 & next(y) = -35
+ | direction = 320 & next(x) = 41 & next(y) = -35
+ | direction = 321 & next(x) = 42 & next(y) = -34
+ | direction = 322 & next(x) = 43 & next(y) = -33
+ | direction = 323 & next(x) = 43 & next(y) = -32
+ | direction = 324 & next(x) = 44 & next(y) = -32
+ | direction = 325 & next(x) = 44 & next(y) = -31
+ | direction = 326 & next(x) = 45 & next(y) = -30
+ | direction = 327 & next(x) = 45 & next(y) = -29
+ | direction = 328 & next(x) = 46 & next(y) = -29
+ | direction = 329 & next(x) = 46 & next(y) = -28
+ | direction = 330 & next(x) = 47 & next(y) = -27
+ | direction = 331 & next(x) = 47 & next(y) = -26
+ | direction = 332 & next(x) = 48 & next(y) = -25
+ | direction = 333 & next(x) = 48 & next(y) = -25
+ | direction = 334 & next(x) = 49 & next(y) = -24
+ | direction = 335 & next(x) = 49 & next(y) = -23
+ | direction = 336 & next(x) = 49 & next(y) = -22
+ | direction = 337 & next(x) = 50 & next(y) = -21
+ | direction = 338 & next(x) = 50 & next(y) = -20
+ | direction = 339 & next(x) = 50 & next(y) = -19
+ | direction = 340 & next(x) = 51 & next(y) = -18
+ | direction = 341 & next(x) = 51 & next(y) = -18
+ | direction = 342 & next(x) = 51 & next(y) = -17
+ | direction = 343 & next(x) = 52 & next(y) = -16
+ | direction = 344 & next(x) = 52 & next(y) = -15
+ | direction = 345 & next(x) = 52 & next(y) = -14
+ | direction = 346 & next(x) = 52 & next(y) = -13
+ | direction = 347 & next(x) = 53 & next(y) = -12
+ | direction = 348 & next(x) = 53 & next(y) = -11
+ | direction = 349 & next(x) = 53 & next(y) = -10
+ | direction = 350 & next(x) = 53 & next(y) = -9
+ | direction = 351 & next(x) = 53 & next(y) = -8
+ | direction = 352 & next(x) = 53 & next(y) = -8
+ | direction = 353 & next(x) = 54 & next(y) = -7
+ | direction = 354 & next(x) = 54 & next(y) = -6
+ | direction = 355 & next(x) = 54 & next(y) = -5
+ | direction = 356 & next(x) = 54 & next(y) = -4
+ | direction = 357 & next(x) = 54 & next(y) = -3
+ | direction = 358 & next(x) = 54 & next(y) = -2
+ | direction = 359 & next(x) = 54 & next(y) = -1;
 
     SnowballInit :=
       next(snowball.direction) in 0..90 & next(snowball.x) = x + 0 & next(snowball.y) = y + 0

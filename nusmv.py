@@ -41,6 +41,9 @@ def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     moves = movement.moves(penguinspec.movevel)
     definitions += [moveexp(moves, "MoveNext")]
 
+    pngvels = movement.fricvelext(penguinspec.mass, islandspec.friction, penguinspec.pngvel, 1)
+    definitions += [ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(len(pngvels)-1).build())]
+
     return definitions
 
 

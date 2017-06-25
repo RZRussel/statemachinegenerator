@@ -25,15 +25,11 @@ def fricvelext(mass, friction, initvel, delta):
         Exception("Delta time must be positive")
 
     velocities = [initvel]
-    indexes = [0]
     i = 1
 
-    while velocities[-1] > 0:
+    while velocities[0] > 0:
         velocity = int(round(initvel * math.exp(-i*delta*friction/mass)))
-
-        if velocity != velocities[-1]:
-            velocities += [velocity]
-            indexes += [i-1]
+        velocities = [velocity] + velocities
         i += 1
 
-    return indexes, velocities
+    return velocities

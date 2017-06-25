@@ -51,7 +51,7 @@ case
   direction in 323..331 : 10;
   direction in 332..343 : 11;
   direction in 344..359 : 12;
-end;
+esac;
 
 FlyOY :=
 case
@@ -104,7 +104,7 @@ case
   direction in 348..352 : -2;
   direction in 353..357 : -1;
   direction in 358..359 : 0;
-end;
+esac;
 
 // Penguin definitions
 
@@ -465,4 +465,6 @@ MoveNext := direction = 0 & next(x) = 54 & next(y) = 0
  | direction = 356 & next(x) = 54 & next(y) = -4
  | direction = 357 & next(x) = 54 & next(y) = -3
  | direction = 358 & next(x) = 54 & next(y) = -2
- | direction = 359 & next(x) = 54 & next(y) = -1
+ | direction = 359 & next(x) = 54 & next(y) = -1;
+
+d_pushing_index_max := 20;
