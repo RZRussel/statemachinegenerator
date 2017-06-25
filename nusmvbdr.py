@@ -100,6 +100,39 @@ class CaseDefinitionBuilder(BaseDefinitionBuilder):
         content[expstr] = resstr
         return CaseDefinitionBuilder(self.name(), content)
 
+    def withexpappended(self, lhsexp, op):
+        if self.content() is None:
+            content = {}
+        else:
+            content = self.content().copy()
+
+        newcontent = {}
+        for expstr in content.keys():
+            newcontent[op(lhsexp, ExpressionBuilder(expstr)).build()] = content[expstr]
+
+        return CaseDefinitionBuilder(self.name(), newcontent)
+
+    def combined(self, other):
+        if not isinstance(other, CaseDefinitionBuilder):
+            raise Exception("Invalid definition to combine")
+
+        if other.name() != self.name():
+            raise Exception("Can't combine definition with different names")
+
+        if other.content() is None:
+            othercontent = {}
+        else:
+            othercontent = other.content().copy()
+
+        if self.content() is None:
+            content = {}
+        else:
+            content = self.content().copy()
+
+        content.update(othercontent)
+        return CaseDefinitionBuilder(self.name(), content)
+
+
     def build(self):
         if len(self.content()) == 0:
             raise Exception("At list 1 case must be added before building")

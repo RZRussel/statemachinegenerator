@@ -29,8 +29,8 @@ def sbdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     definitions = []
 
     flies = movement.moves(snowballspec.flyvel)
-    definitions += [movecase(list(map(lambda point: point[0], flies)), "FlyOX")]
-    definitions += [movecase(list(map(lambda point: point[1], flies)), "FlyOY")]
+    definitions += [movecase(list(map(lambda point: point[0], flies)), "FlyOx")]
+    definitions += [movecase(list(map(lambda point: point[1], flies)), "FlyOy")]
 
     return definitions
 
@@ -43,8 +43,27 @@ def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
 
     pngvels = movement.fricvelext(penguinspec.mass, islandspec.friction, penguinspec.pngvel, 1)
     definitions += [ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(len(pngvels)-1).build())]
+    definitions += pgpngdefinitions(penguinspec, pngvels)
 
     return definitions
+
+def pgpngdefinitions(penguinspec, pngvels):
+    pngmovecaseox = CaseDefinitionBuilder("PushingOx")
+    pngmovecaseoy = CaseDefinitionBuilder("PushingOy")
+    pngindexp = ExpressionBuilder("pushing_index")
+    expconj = lambda exp1, exp2: exp1.withand(exp2)
+    for pngind in range(1, len(pngvels)):
+        pngmoves = movement.moves(pngvels[pngind])
+
+        casedef = movecase(list(map(lambda point: point[0], pngmoves)), pngmovecaseox.name())
+        casedef = casedef.withexpappended(pngindexp.witheq(ExpressionBuilder(pngind)), expconj)
+        pngmovecaseox = pngmovecaseox.combined(casedef)
+
+        casedef = movecase(list(map(lambda point: point[1], pngmoves)), pngmovecaseoy.name())
+        casedef = casedef.withexpappended(pngindexp.witheq(ExpressionBuilder(pngind)), expconj)
+        pngmovecaseoy = pngmovecaseoy.combined(casedef)
+
+    return [pngmovecaseox, pngmovecaseoy]
 
 
 def moveexp(points, name):

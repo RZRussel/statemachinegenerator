@@ -7,7 +7,7 @@ MODULE Snowball(world, owner)
 
   -- relations --
   DEFINE
-    FlyOX :=
+    FlyOx :=
 case
   direction in 0..16 : 12;
   direction in 17..28 : 11;
@@ -60,7 +60,7 @@ case
   direction in 344..359 : 12;
 esac;
 
-    FlyOY :=
+    FlyOy :=
 case
   direction in 0..2 : 0;
   direction in 3..7 : 1;
@@ -142,7 +142,7 @@ esac;
     Deact := !fly_flag & !next(fly_flag) & next(x) = x & next(y) = y 
       & next(direction) = direction;
 
-    Fly := fly_flag & !bool(owner.opponent.snowball_collision) & next(x) = x + FlyOX & next(y) = y + FlyOY
+    Fly := fly_flag & !bool(owner.opponent.snowball_collision) & next(x) = x + FlyOx & next(y) = y + FlyOy
       & (bool(next(owner.opponent.snowball_collision)) = CollisionDetected & !next(owner.opponent.dead)
           & next(fly_flag) | next(owner.opponent.snowball_collision) = owner.opponent.snowball_collision)
       & next(fly_flag) = !DeadPointReached;
