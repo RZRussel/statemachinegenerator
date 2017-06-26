@@ -29,20 +29,43 @@ def sbdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     definitions = []
 
     flies = movement.moves(snowballspec.flyvel)
-    definitions += [movecase(list(map(lambda point: point[0], flies)), "FlyOx")]
-    definitions += [movecase(list(map(lambda point: point[1], flies)), "FlyOy")]
+    definitions.append(movecase(list(map(lambda point: point[0], flies)), "FlyOx"))
+    definitions.append(movecase(list(map(lambda point: point[1], flies)), "FlyOy"))
+    definitions.append(sbdeadptsdefs(islandspec, flies))
 
     return definitions
+
+def sbdeadptsdefs(islandspec, sbflies):
+    dpoints = []
+    rflies = list(filter(lambda p: p[0] <= 0 and p[1] <= 0, sbflies))
+    for ix in range(islandspec.centerx - islandspec.bradius, islandspec.centerx + 1):
+        for iy in range(islandspec.centery - islandspec.sradius, islandspec.centery + 1):
+            for (ox, oy) in rflies:
+                if islandspec.contains((ix, iy)) and not islandspec.contains((ix + ox, iy + oy)):
+                    dpoints.append((ix + ox, iy + oy))
+                    dpoints.append((2*islandspec.centerx - ix - ox, iy + oy))
+                    dpoints.append((ix + ox, 2*islandspec.centery - iy - oy))
+                    dpoints.append((2 * islandspec.centerx - ix - ox, 2*islandspec.centery - iy - oy))
+                    break
+
+    casedef = CaseDefinitionBuilder("DeadPointReached")
+    for (x, y) in dpoints:
+        xexp = ExpressionBuilder("x").withnext().witheq(ExpressionBuilder(x))
+        yexp = ExpressionBuilder("y").withnext().witheq(ExpressionBuilder(y))
+        casedef = casedef.withcase(xexp.withand(yexp).build(), ExpressionBuilder.true().build())
+
+    casedef = casedef.withcase(ExpressionBuilder.true().build(), ExpressionBuilder.false().build())
+    return casedef
 
 
 def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     definitions = []
 
     moves = movement.moves(penguinspec.movevel)
-    definitions += [moveexp(moves, "MoveNext")]
+    definitions.append(moveexp(moves, "MoveNext"))
 
     pngvels = movement.fricvelext(penguinspec.mass, islandspec.friction, penguinspec.pngvel, 1)
-    definitions += [ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(len(pngvels)-1).build())]
+    definitions.append(ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(len(pngvels)-1).build()))
     definitions += pgpngdefinitions(penguinspec, pngvels)
 
     return definitions
@@ -74,7 +97,7 @@ def moveexp(points, name):
 
     direction = 0
     for i in range(1, len(points) + 1):
-        if i == len(points) or points[i][0] != points[direction][0] or points[i][0] != points[direction][1]:
+        if i == len(points) or points[i][0] != points[direction][0] or points[i][1] != points[direction][1]:
             if (i - direction) > 1:
                 expression = direxp.within(ExpressionBuilder(direction, i-1))
             else:

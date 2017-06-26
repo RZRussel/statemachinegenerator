@@ -10,6 +10,14 @@ class ExpressionBuilder:
             else:
                 self.__expression = str(arg1)
 
+    @staticmethod
+    def true():
+        return ExpressionBuilder("TRUE")
+
+    @staticmethod
+    def false():
+        return ExpressionBuilder("FALSE")
+
     def build(self):
         if len(self.__expression) == 0:
             raise Exception("Can't build empty expression")
