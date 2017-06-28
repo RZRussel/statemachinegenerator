@@ -13,6 +13,14 @@ def moves(velocity):
 
     return points
 
+
+def pointrot(x, y):
+    points = []
+    for direction in range(0, 360):
+        points.append((round(x*math.cos(math.radians(direction))), round(y*math.sin(math.radians(direction)))))
+    return points
+
+
 def fricvelext(mass, friction, initvel, delta):
     if mass <= 0:
         raise Exception("Mass must be positive")

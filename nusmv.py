@@ -56,6 +56,7 @@ def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
 
     definitions.append(ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(len(pngvels)-1).build()))
     definitions.append(pgpushingdef(penguinspec, pngvels))
+    definitions.append(pgsbinitdef(penguinspec))
     definitions.append(pngdeadptsdef(islandspec, possiblevels))
     definitions.append(coldetecteddf(penguinspec.radius, penguinspec.radius, "CollisionDetected"))
 
@@ -73,6 +74,32 @@ def pgpushingdef(penguinspec, pngvels):
         pngmovecase = pngmovecase.combined(casedef)
 
     return pngmovecase
+
+
+def pgsbinitdef(penguinspec):
+    casedef = CaseDefinitionBuilder("SnowballInit")
+    direxp = ExpressionBuilder("snowball.direction").withnext()
+    nxexp = ExpressionBuilder("snowball.x").withnext().withsub(ExpressionBuilder("x").withnext())
+    nyexp = ExpressionBuilder("snowball.y").withnext().withsub(ExpressionBuilder("y").withnext())
+
+    offsets = movement.pointrot(penguinspec.sbox, penguinspec.sboy)
+    direction = 0
+    for i in range(1, len(offsets) + 1):
+        if i == len(offsets) or offsets[direction] != offsets[i]:
+            if direction - i > 1:
+                exp = direxp.within(ExpressionBuilder(direction, i-1))
+            else:
+                exp = direxp.witheq(ExpressionBuilder(direction))
+
+            exp = exp.withand(nxexp.witheq(ExpressionBuilder(offsets[direction][0])))
+            exp = exp.withand(nyexp.witheq(ExpressionBuilder(offsets[direction][1])))
+
+            casedef = casedef.withcase(exp.build(), ExpressionBuilder.true().build())
+            direction = i
+
+    casedef = casedef.withcase(ExpressionBuilder.true().build(), ExpressionBuilder.false().build())
+    return casedef
+
 
 def pngdeadptsdef(islandspec, velocities):
     containsfunc = lambda point: islandspec.contains(point)

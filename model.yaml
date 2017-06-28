@@ -24,12 +24,12 @@ penguin:
   move_velocity: 5
   # 27
   radius: 27
-  stun_timer_max: 30
-  pushing_index_max: 10
   # 20
   pushing_velocity: 20
-  pushing_timer_max: 60
-  snowball_timer_max: 60
+  # 10
+  snowball_ox: 10
+  # 15
+  snowball_oy: 15
 
 snowball:
   mass: 0.1

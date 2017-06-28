@@ -33,12 +33,9 @@ class PenguinSpec:
         self.movevel = spec_dict["move_velocity"]
         self.radius = spec_dict["radius"]
         self.mass = spec_dict["mass"]
-        self.stuntmax = spec_dict["stun_timer_max"]
-        self.pngindmax = spec_dict["pushing_index_max"]
         self.pngvel = spec_dict["pushing_velocity"]
-        self.pngtmax = spec_dict["pushing_timer_max"]
-        self.sbtimermax = spec_dict["snowball_timer_max"]
-
+        self.sbox = spec_dict["snowball_ox"]
+        self.sboy = spec_dict["snowball_oy"]
 
 class SnowballSpec:
     def __init__(self, spec_dict):

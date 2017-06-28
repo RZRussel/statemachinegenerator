@@ -1137,10 +1137,10 @@ esac;
 
   -- initial state --
   ASSIGN 
-    x := 0;
-    y := 0;
-    direction := 0;
-    fly_flag := FALSE;
+    init(x) := 0;
+    init(y) := 0;
+    init(direction) := 0;
+    init(fly_flag) := FALSE;
 
   DEFINE
     Deact := !fly_flag & !next(fly_flag) & next(x) = x & next(y) = y 
@@ -2977,18 +2977,18 @@ esac;
 
   -- initial state --
   ASSIGN
-    x := init_x;
-    y := init_y;
-    direction := init_dir;
-    stun_timer := 0;
-    pushing_index := 0;
-    pushing_timer := 0;
-    pushed_index := 0;
-    pushed_velocity := 0;
-    dead := FALSE;
-    penguin_collision := 0b_0;
-    snowball_collision := 0b_0;
-    snowball_timer := 0;
+    init(x) := init_x;
+    init(y) := init_y;
+    init(direction) := init_dir;
+    init(stun_timer) := 0;
+    init(pushing_index) := 0;
+    init(pushing_timer) := 0;
+    init(pushed_index) := 0;
+    init(pushed_velocity) := 0;
+    init(dead) := FALSE;
+    init(penguin_collision) := 0b_0;
+    init(snowball_collision) := 0b_0;
+    init(snowball_timer) := 0;
 
 -- action definitions --
   DEFINE
