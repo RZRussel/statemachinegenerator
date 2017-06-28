@@ -13,7 +13,6 @@ def moves(velocity):
 
     return points
 
-
 def fricvelext(mass, friction, initvel, delta):
     if mass <= 0:
         raise Exception("Mass must be positive")
