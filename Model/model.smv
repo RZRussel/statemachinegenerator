@@ -1143,25 +1143,26 @@ esac;
     init(fly_flag) := FALSE;
 
   DEFINE
-    Deact := !fly_flag & !next(fly_flag) & next(x) = x & next(y) = y 
+    Deact := !fly_flag & !next(fly_flag) 
+      & next(x) = x & next(y) = y 
       & next(direction) = direction;
 
-    Fly := fly_flag & !bool(owner.opponent.snowball_collision) & FlightPosChanged
-      & (bool(next(owner.opponent.snowball_collision)) = CollisionDetected & !next(owner.opponent.dead)
-          & next(fly_flag) | next(owner.opponent.snowball_collision) = owner.opponent.snowball_collision)
-      & next(fly_flag) = !DeadPointReached;
+    Fly := !bool(owner.opponent.snowball_collision)
+      & FlightPosChanged & next(direction) = direction
+      & fly_flag & next(fly_flag) = !DeadPointReached;
 
-    Collide := bool(owner.opponent.snowball_collision) & !next(bool(owner.opponent.snowball_collision))
-      & fly_flag & !owner.opponent.dead & !next(fly_flag)
-        & (owner.opponent.pushing_index = 0  & next(owner.opponent.stun_timer) = owner.opponent.d_stun_timer_max
-          | owner.opponent.pushing_index > 0);
+    Collide := bool(owner.opponent.snowball_collision)
+      & next(x) = x & next(y) = y & next(direction) = direction
+      & fly_flag & !next(fly_flag);
+
+    Act := owner.Throw | owner.ThrowWhilePushed;
 
   -- snowball's state possible transitions --
   TRANS
-    Fly & !owner.Throw & !Deact & !Collide
-    | !Fly & owner.Throw & !Deact & !Collide
-    | !Fly & !owner.Throw & Deact & !Collide
-    | !Fly & !owner.Throw & !Deact & Collide;
+    Fly & !Act & !Deact & !Collide
+    | !Fly & Act & !Deact & !Collide
+    | !Fly & !Act & Deact & !Collide
+    | !Fly & !Act & !Deact & Collide;
 
 
 -- Module for modeling penguin actor --
@@ -2960,6 +2961,21 @@ case
   TRUE : FALSE;
 esac;
 
+  StunTimerAct := next(stun_timer) = d_stun_timer_max;
+  StunTimerTick := stun_timer > 0 & next(stun_timer) = stun_timer - 1;
+  StunTimerDeact := stun_timer = 0 & next(stun_timer) = 0;
+  PushingTimerAct := pushing_timer = 0 & next(pushing_timer) = d_pushing_timer_max;
+  PushingTimerTick := pushing_timer > 0 & next(pushing_timer) = pushing_timer - 1;
+  PushingTimerDeact := pushing_timer = 0 & next(pushing_timer) = 0;
+  SnowballTimerAct := snowball_timer = 0 & next(snowball_timer) = d_snowball_timer_max;
+  SnowballTimerTick := snowball_timer > 0 & next(snowball_timer) = snowball_timer - 1;
+  SnowballTimerDeact := snowball_timer = 0 & next(snowball_timer) = 0;
+
+  PenguinCollisionChecked := bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
+        | next(penguin_collision) = penguin_collision;
+  SnowballCollisionChecked := bool(next(snowball_collision)) = opponent.snowball.CollisionDetected & !next(dead) & next(opponent.snowball.fly_flag)
+        | next(snowball_collision) = snowball_collision;
+
   VAR
   	x: 0..world.d_max_x; -- current x penguin's position in the world
   	y: 0..world.d_max_y; -- current y penguin's position in the world
@@ -2992,60 +3008,99 @@ esac;
 
 -- action definitions --
   DEFINE
-    Move := !dead & stun_timer = 0 & pushing_index = 0 & pushed_index = 0
-      & !bool(penguin_collision) & !bool(snowball_collision)
-      & next(pushing_index) = 0 & next(pushed_index) = 0 & next(pushed_velocity) = pushed_velocity
-      & next(stun_timer) = 0 & snowball_timer < d_snowball_timer_max
-      & MovePosChanged & next(dead) = DeadPointReached
-      & (bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
-        | next(penguin_collision) = penguin_collision);
+    Move := MovePosChanged 
+      & StunTimerDeact
+      & pushing_index = 0 & next(pushing_index) = 0
+      & (PushingTimerDeact | PushingTimerTick)
+      & pushed_index = 0 & next(pushed_index) = 0
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & next(dead) = DeadPointReached
+      & !bool(penguin_collision) & PenguinCollisionChecked
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & (SnowballTimerDeact | SnowballTimerTick);
 
-    Throw := !dead & stun_timer = 0 & pushing_index = 0 & next(pushing_index) = 0
-      & !bool(penguin_collision) & !bool(snowball_collision)
-      & snowball_timer = 0 & next(snowball_timer) = d_snowball_timer_max
-      & (pushed_index > 0 | next(x) = x & next(y) = y)
-      & next(snowball.fly_flag) & SnowballInit
-      & (bool(next(penguin_collision)) = CollisionDetected & !next(opponent.dead) 
-        | next(penguin_collision) = penguin_collision);
+    Throw := next(x) = x & next(y) = y
+      & StunTimerDeact
+      & pushing_index = 0 & next(pushing_index) = 0
+      & (PushingTimerDeact | PushingTimerTick)
+      & pushed_index = 0 & next(pushed_index) = 0
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & !next(dead)
+      & !bool(penguin_collision) & PenguinCollisionChecked
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & SnowballTimerAct
+      & SnowballInit
+      & !snowball.fly_flag & next(snowball.fly_flag);
 
-    Push := !dead & stun_timer = 0 & pushed_index = 0 & pushing_timer = 0
-      & !bool(penguin_collision) & !bool(snowball_collision)
-      & next(pushing_index) = d_pushing_index_max & next(pushing_timer) = d_pushing_timer_max
-      & next(x) = x & next(y) = y & next(pushed_index) = 0 & next(pushed_velocity) = pushed_velocity
-      & (bool(next(penguin_collision)) = CollisionDetected & !next(opponent.dead) 
-        | next(penguin_collision) = penguin_collision);
+    ThrowWhilePushed := next(x) = x + PushedOx & next(y) = y + PushedOy & next(direction) = direction
+      & StunTimerDeact
+      & pushing_index = 0 & next(pushing_index) = 0
+      & (PushingTimerDeact | PushingTimerTick)
+      & pushed_index > 0 & next(pushed_index) = pushed_index - 1
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & next(dead) = DeadPointReached
+      & !bool(penguin_collision) & PenguinCollisionChecked
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & SnowballTimerAct
+      & SnowballInit
+      & !snowball.fly_flag & next(snowball.fly_flag);
 
-    Stay := !dead & pushing_index = 0 & pushed_index = 0
-      & !bool(penguin_collision) & !bool(snowball_collision)
-      & next(x) = x & next(y) = y & next(pushing_index) = 0 & next(snowball_timer) < d_snowball_timer_max
-      & next(pushed_index) = 0 & next(pushed_velocity) = pushed_velocity
-      & (bool(next(penguin_collision)) = CollisionDetected & !next(opponent.dead) 
-        | next(penguin_collision) = penguin_collision);
+    Push := next(x) = x & next(y) = y
+      & StunTimerDeact
+      & pushing_index = 0 & next(pushing_index) = d_pushing_index_max
+      & PushingTimerAct
+      & pushed_index = 0 & next(pushed_index) = 0
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & !next(dead)
+      & !bool(penguin_collision) & PenguinCollisionChecked
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & (SnowballTimerDeact | SnowballTimerTick);
 
-    Dead := dead & next(dead) & next(x) = x & next(y) = y & next(direction) = direction
-      & next(pushing_index) = pushing_index & next(pushed_index) = pushed_index
-      & next(pushed_velocity) = pushed_velocity & next(penguin_collision) = penguin_collision
-      & next(snowball_collision) = snowball_collision & next(stun_timer) < d_stun_timer_max
-      & next(snowball_timer) < d_snowball_timer_max & next(pushing_timer) < d_pushing_timer_max;
+    Stay := next(x) = x & next(y) = y & next(direction) = direction
+      & (StunTimerDeact | StunTimerTick)
+      & pushing_index = 0 & next(pushing_index) = 0
+      & (PushingTimerDeact | PushingTimerTick)
+      & pushed_index = 0 & next(pushed_index) = 0
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & !next(dead)
+      & !bool(penguin_collision) & PenguinCollisionChecked
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & (SnowballTimerDeact | SnowballTimerTick);
 
-    Pushing := !dead & pushing_index > 0 & pushed_index = 0 & stun_timer = 0 & !bool(penguin_collision)
-      & next(pushing_index) = pushing_index - 1 & next(pushed_index) = 0
-      & next(pushed_velocity) = pushed_velocity & next(stun_timer) = 0 & next(snowball_timer) < d_snowball_timer_max
-      & next(direction) = direction & PushingPosChanged
-      & next(dead) = DeadPointReached
-      & (bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
-        | next(penguin_collision) = penguin_collision);
+    Dead := next(x) = x & next(y) = y & next(direction) = direction
+      & next(stun_timer) = stun_timer
+      & next(pushing_index) = pushing_index
+      & next(pushing_timer) = pushing_timer
+      & next(pushed_index) = pushed_index
+      & next(pushed_velocity) = pushed_velocity
+      & dead & next(dead)
+      & !bool(penguin_collision) & !bool(next(penguin_collision))
+      & !bool(snowball_collision) & !bool(next(snowball_collision))
+      & next(snowball_timer) = snowball_timer;
+
+    Pushing := PushingPosChanged & next(direction) = direction
+      & StunTimerDeact
+      & pushing_index > 0 & next(pushing_index) = pushing_index - 1
+      & (PushingTimerDeact | PushingTimerTick)
+      & pushed_index = 0 & next(pushed_index) = 0
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & next(dead) = DeadPointReached
+      & !bool(penguin_collision) & PenguinCollisionChecked
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & (SnowballTimerDeact | SnowballTimerTick);
     
-    Pushed := !dead & pushing_index = 0 & pushed_index > 0 & !bool(penguin_collision)
-      & next(pushed_index) = pushed_index - 1 & next(pushed_velocity) = pushed_velocity
-      & next(pushing_index) = pushing_index & next(pushing_timer) < d_pushing_timer_max & next(direction) = direction
-      & next(x) = x + PushedOx & next(y) = y + PushedOy
-      & next(dead) = DeadPointReached
-      & (bool(next(penguin_collision)) = CollisionDetected & !next(dead) & !next(opponent.dead) 
-        | next(penguin_collision) = penguin_collision);
+    Pushed := next(x) = x + PushedOx & next(y) = y + PushedOy & next(direction) = direction
+      & (StunTimerDeact | StunTimerTick)
+      & pushing_index = 0 & next(pushing_index) = 0
+      & (PushingTimerDeact | PushingTimerTick)
+      & pushed_index > 0 & next(pushed_index) = pushed_index - 1
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & next(dead) = DeadPointReached
+      & !bool(penguin_collision) & PenguinCollisionChecked
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & (SnowballTimerDeact | SnowballTimerTick);
 
-    Collide := bool(penguin_collision) & !bool(next(penguin_collision)) & !dead & !(opponent.dead)
-      & ((pushing_index = 0 & pushed_index = 0
+    PenguinCollisionResolved := ((pushing_index = 0 & pushed_index = 0
           & ((opponent.pushing_index = 0 & opponent.pushed_index = 0 
               & next(direction) = toint(CollisionStaticStatic[9:0]) & next(pushed_velocity) = toint(CollisionStaticStatic[19:10])
               & next(pushed_index) = PushedInitIndex)
@@ -3075,27 +3130,62 @@ esac;
           | (opponent.pushing_index = 0 & opponent.pushed_index > 0
               & next(direction) = toint(CollisionPushedPushed[9:0]) & next(pushed_velocity) = toint(CollisionPushedPushed[19:10])
               & next(pushed_index) = PushedInitIndex))))
-      & next(pushing_index) = 0;
+      & next(pushing_index) = 0; 
 
-    TickStunTimer := stun_timer = 0 & (next(stun_timer) = 0 | next(stun_timer) = d_stun_timer_max)
-      | stun_timer > 0 & (next(stun_timer) = stun_timer - 1 | next(stun_timer) = d_stun_timer_max);
+    CollidePenguin := next(x) = x & next(y) = y
+      & (StunTimerDeact | StunTimerTick)
+      & PenguinCollisionResolved
+      & (PushingTimerDeact | PushingTimerTick)
+      & !dead & !next(dead)
+      & bool(penguin_collision) & !bool(next(penguin_collision))
+      & !bool(snowball_collision) & SnowballCollisionChecked
+      & (SnowballTimerDeact | SnowballTimerTick);
 
-    TickPushingTimer := pushing_timer = 0 & (next(pushing_timer) = 0 | next(pushing_timer) = d_pushing_timer_max)
-      | pushing_timer > 0 & next(pushing_timer) = pushing_timer - 1;
+    CollideSnowball := next(x) = x & next(y) = y & next(direction) = direction
+      & (pushing_index > 0 & StunTimerDeact | pushing_index = 0 & StunTimerAct)
+      & next(pushing_index) = pushing_index
+      & (PushingTimerDeact | PushingTimerTick)
+      & next(pushed_index) = pushed_index
+      & next(pushed_velocity) = pushed_velocity
+      & !dead & !next(dead)
+      & !bool(penguin_collision) & PenguinCollisionChecked 
+      & bool(snowball_collision) & !bool(next(snowball_collision))
+      & (SnowballTimerDeact | SnowballTimerTick);
 
-    TickBallTimer := snowball_timer = 0 & (next(snowball_timer) = 0 | next(snowball_timer) = d_snowball_timer_max)
-      | snowball_timer > 0 & next(snowball_timer) = snowball_timer - 1;
+      CollideSnowballPenguin := next(x) = x & next(y) = y
+        & (pushing_index > 0 & StunTimerDeact | pushing_index = 0 & StunTimerAct)
+        & PenguinCollisionResolved
+        & (PushingTimerDeact | PushingTimerTick)
+        & !dead & !next(dead)
+        & bool(penguin_collision) & !bool(next(penguin_collision))
+        & bool(snowball_collision) & !bool(next(snowball_collision))
+        & (SnowballTimerDeact | SnowballTimerTick);
+
+      ValidAction := Move & !Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead 
+        | !Move & !Throw & ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & Push & !Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & !Push & Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & !Push & !Stay & Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & !CollidePenguin & CollideSnowball
+          & !CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & CollideSnowballPenguin & !Dead
+        | !Move & !Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
+          & !CollideSnowballPenguin & Dead;
 
   TRANS
-    (Move & !Throw & !Push & !Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
-      | !Move & Throw & !Push & !Stay & !Pushing & !snowball.Collide & !Collide & !Dead
-      | !Move & !Throw & Push & !Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
-      | !Move & !Throw & !Push & Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
-      | !Move & !Throw & !Push & !Stay & Pushing & !Pushed & !snowball.Collide & !Collide & !Dead
-      | !Move & !Push & !Stay & !Pushing & Pushed & !snowball.Collide & !Collide & !Dead
-      | !Move & !Throw & !Push & !Stay & !Pushing & !Pushed & (snowball.Collide | Collide) & !Dead
-      | !Move & !Throw & !Push & !Stay & !Pushing & !Pushed & !snowball.Collide & !Collide & Dead)
-    & TickStunTimer & TickPushingTimer & TickBallTimer;
+    ValidAction;
 
 -- Module for modeling island actor --
 MODULE Island(world)
