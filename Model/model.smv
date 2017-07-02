@@ -3363,7 +3363,7 @@ MODULE MovementTestBehavior
     p1.Throw | p1.Stay;
 
   TRANS
-    p1.snowball.Fly | p1.snowball.Act | p1.snowball.Deact | p1.snowball.Collide;
+    p1.snowball.Fly | p1.Throw | p1.snowball.Deact | p1.snowball.Collide;
 
   CTLSPEC
     AG EF (p1.snowball.fly_flag & p1.snowball_timer > 0 & AF (!p1.snowball.fly_flag & p1.snowball_timer = 0));
