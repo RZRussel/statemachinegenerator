@@ -93,10 +93,85 @@ case
   TRUE : FALSE;
 esac;
 
-    CollisionDetected := 
-      case
-        TRUE: FALSE;
-      esac;
+    CollisionDetected :=
+case
+  (next(x) - x) = -37 & (next(y) - y) = 0 : TRUE;
+  (next(x) - x) = -36 & (next(y) - y) in -8..8 : TRUE;
+  (next(x) - x) = -35 & (next(y) - y) in -12..12 : TRUE;
+  (next(x) - x) = -34 & (next(y) - y) in -14..14 : TRUE;
+  (next(x) - x) = -33 & (next(y) - y) in -16..16 : TRUE;
+  (next(x) - x) = -32 & (next(y) - y) in -18..18 : TRUE;
+  (next(x) - x) = -31 & (next(y) - y) in -20..20 : TRUE;
+  (next(x) - x) = -30 & (next(y) - y) in -21..21 : TRUE;
+  (next(x) - x) = -29 & (next(y) - y) in -22..22 : TRUE;
+  (next(x) - x) = -28 & (next(y) - y) in -24..24 : TRUE;
+  (next(x) - x) = -27 & (next(y) - y) in -25..25 : TRUE;
+  (next(x) - x) = -26 & (next(y) - y) in -26..26 : TRUE;
+  (next(x) - x) = -25 & (next(y) - y) in -27..27 : TRUE;
+  (next(x) - x) = -24 & (next(y) - y) in -28..28 : TRUE;
+  (next(x) - x) = -23 & (next(y) - y) in -28..28 : TRUE;
+  (next(x) - x) = -22 & (next(y) - y) in -29..29 : TRUE;
+  (next(x) - x) = -21 & (next(y) - y) in -30..30 : TRUE;
+  (next(x) - x) = -20 & (next(y) - y) in -31..31 : TRUE;
+  (next(x) - x) = -19 & (next(y) - y) in -31..31 : TRUE;
+  (next(x) - x) = -18 & (next(y) - y) in -32..32 : TRUE;
+  (next(x) - x) = -17 & (next(y) - y) in -32..32 : TRUE;
+  (next(x) - x) = -16 & (next(y) - y) in -33..33 : TRUE;
+  (next(x) - x) = -15 & (next(y) - y) in -33..33 : TRUE;
+  (next(x) - x) = -14 & (next(y) - y) in -34..34 : TRUE;
+  (next(x) - x) = -13 & (next(y) - y) in -34..34 : TRUE;
+  (next(x) - x) = -12 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = -11 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = -10 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = -9 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = -8 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -7 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -6 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -5 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -4 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -3 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -2 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -1 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 0 & (next(y) - y) in -37..37 : TRUE;
+  (next(x) - x) = 1 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 2 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 3 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 4 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 5 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 6 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 7 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 8 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 9 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = 10 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = 11 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = 12 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = 13 & (next(y) - y) in -34..34 : TRUE;
+  (next(x) - x) = 14 & (next(y) - y) in -34..34 : TRUE;
+  (next(x) - x) = 15 & (next(y) - y) in -33..33 : TRUE;
+  (next(x) - x) = 16 & (next(y) - y) in -33..33 : TRUE;
+  (next(x) - x) = 17 & (next(y) - y) in -32..32 : TRUE;
+  (next(x) - x) = 18 & (next(y) - y) in -32..32 : TRUE;
+  (next(x) - x) = 19 & (next(y) - y) in -31..31 : TRUE;
+  (next(x) - x) = 20 & (next(y) - y) in -31..31 : TRUE;
+  (next(x) - x) = 21 & (next(y) - y) in -30..30 : TRUE;
+  (next(x) - x) = 22 & (next(y) - y) in -29..29 : TRUE;
+  (next(x) - x) = 23 & (next(y) - y) in -28..28 : TRUE;
+  (next(x) - x) = 24 & (next(y) - y) in -28..28 : TRUE;
+  (next(x) - x) = 25 & (next(y) - y) in -27..27 : TRUE;
+  (next(x) - x) = 26 & (next(y) - y) in -26..26 : TRUE;
+  (next(x) - x) = 27 & (next(y) - y) in -25..25 : TRUE;
+  (next(x) - x) = 28 & (next(y) - y) in -24..24 : TRUE;
+  (next(x) - x) = 29 & (next(y) - y) in -22..22 : TRUE;
+  (next(x) - x) = 30 & (next(y) - y) in -21..21 : TRUE;
+  (next(x) - x) = 31 & (next(y) - y) in -20..20 : TRUE;
+  (next(x) - x) = 32 & (next(y) - y) in -18..18 : TRUE;
+  (next(x) - x) = 33 & (next(y) - y) in -16..16 : TRUE;
+  (next(x) - x) = 34 & (next(y) - y) in -14..14 : TRUE;
+  (next(x) - x) = 35 & (next(y) - y) in -12..12 : TRUE;
+  (next(x) - x) = 36 & (next(y) - y) in -8..8 : TRUE;
+  (next(x) - x) = 37 & (next(y) - y) = 0 : TRUE;
+  TRUE : FALSE;
+esac;
 
     DeadPointReached :=
 case
@@ -2036,9 +2111,118 @@ esac;
       esac;
 
     CollisionDetected :=
-      case
-        TRUE: FALSE;
-      esac;
+case
+  (next(x) - x) = -54 & (next(y) - y) = 0 : TRUE;
+  (next(x) - x) = -53 & (next(y) - y) in -10..10 : TRUE;
+  (next(x) - x) = -52 & (next(y) - y) in -14..14 : TRUE;
+  (next(x) - x) = -51 & (next(y) - y) in -17..17 : TRUE;
+  (next(x) - x) = -50 & (next(y) - y) in -20..20 : TRUE;
+  (next(x) - x) = -49 & (next(y) - y) in -22..22 : TRUE;
+  (next(x) - x) = -48 & (next(y) - y) in -24..24 : TRUE;
+  (next(x) - x) = -47 & (next(y) - y) in -26..26 : TRUE;
+  (next(x) - x) = -46 & (next(y) - y) in -28..28 : TRUE;
+  (next(x) - x) = -45 & (next(y) - y) in -29..29 : TRUE;
+  (next(x) - x) = -44 & (next(y) - y) in -31..31 : TRUE;
+  (next(x) - x) = -43 & (next(y) - y) in -32..32 : TRUE;
+  (next(x) - x) = -42 & (next(y) - y) in -33..33 : TRUE;
+  (next(x) - x) = -41 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = -40 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = -39 & (next(y) - y) in -37..37 : TRUE;
+  (next(x) - x) = -38 & (next(y) - y) in -38..38 : TRUE;
+  (next(x) - x) = -37 & (next(y) - y) in -39..39 : TRUE;
+  (next(x) - x) = -36 & (next(y) - y) in -40..40 : TRUE;
+  (next(x) - x) = -35 & (next(y) - y) in -41..41 : TRUE;
+  (next(x) - x) = -34 & (next(y) - y) in -41..41 : TRUE;
+  (next(x) - x) = -33 & (next(y) - y) in -42..42 : TRUE;
+  (next(x) - x) = -32 & (next(y) - y) in -43..43 : TRUE;
+  (next(x) - x) = -31 & (next(y) - y) in -44..44 : TRUE;
+  (next(x) - x) = -30 & (next(y) - y) in -44..44 : TRUE;
+  (next(x) - x) = -29 & (next(y) - y) in -45..45 : TRUE;
+  (next(x) - x) = -28 & (next(y) - y) in -46..46 : TRUE;
+  (next(x) - x) = -27 & (next(y) - y) in -46..46 : TRUE;
+  (next(x) - x) = -26 & (next(y) - y) in -47..47 : TRUE;
+  (next(x) - x) = -25 & (next(y) - y) in -47..47 : TRUE;
+  (next(x) - x) = -24 & (next(y) - y) in -48..48 : TRUE;
+  (next(x) - x) = -23 & (next(y) - y) in -48..48 : TRUE;
+  (next(x) - x) = -22 & (next(y) - y) in -49..49 : TRUE;
+  (next(x) - x) = -21 & (next(y) - y) in -49..49 : TRUE;
+  (next(x) - x) = -20 & (next(y) - y) in -50..50 : TRUE;
+  (next(x) - x) = -19 & (next(y) - y) in -50..50 : TRUE;
+  (next(x) - x) = -18 & (next(y) - y) in -50..50 : TRUE;
+  (next(x) - x) = -17 & (next(y) - y) in -51..51 : TRUE;
+  (next(x) - x) = -16 & (next(y) - y) in -51..51 : TRUE;
+  (next(x) - x) = -15 & (next(y) - y) in -51..51 : TRUE;
+  (next(x) - x) = -14 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = -13 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = -12 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = -11 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = -10 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -9 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -8 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -7 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -6 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -5 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -4 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -3 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -2 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = -1 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 0 & (next(y) - y) in -54..54 : TRUE;
+  (next(x) - x) = 1 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 2 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 3 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 4 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 5 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 6 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 7 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 8 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 9 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 10 & (next(y) - y) in -53..53 : TRUE;
+  (next(x) - x) = 11 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = 12 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = 13 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = 14 & (next(y) - y) in -52..52 : TRUE;
+  (next(x) - x) = 15 & (next(y) - y) in -51..51 : TRUE;
+  (next(x) - x) = 16 & (next(y) - y) in -51..51 : TRUE;
+  (next(x) - x) = 17 & (next(y) - y) in -51..51 : TRUE;
+  (next(x) - x) = 18 & (next(y) - y) in -50..50 : TRUE;
+  (next(x) - x) = 19 & (next(y) - y) in -50..50 : TRUE;
+  (next(x) - x) = 20 & (next(y) - y) in -50..50 : TRUE;
+  (next(x) - x) = 21 & (next(y) - y) in -49..49 : TRUE;
+  (next(x) - x) = 22 & (next(y) - y) in -49..49 : TRUE;
+  (next(x) - x) = 23 & (next(y) - y) in -48..48 : TRUE;
+  (next(x) - x) = 24 & (next(y) - y) in -48..48 : TRUE;
+  (next(x) - x) = 25 & (next(y) - y) in -47..47 : TRUE;
+  (next(x) - x) = 26 & (next(y) - y) in -47..47 : TRUE;
+  (next(x) - x) = 27 & (next(y) - y) in -46..46 : TRUE;
+  (next(x) - x) = 28 & (next(y) - y) in -46..46 : TRUE;
+  (next(x) - x) = 29 & (next(y) - y) in -45..45 : TRUE;
+  (next(x) - x) = 30 & (next(y) - y) in -44..44 : TRUE;
+  (next(x) - x) = 31 & (next(y) - y) in -44..44 : TRUE;
+  (next(x) - x) = 32 & (next(y) - y) in -43..43 : TRUE;
+  (next(x) - x) = 33 & (next(y) - y) in -42..42 : TRUE;
+  (next(x) - x) = 34 & (next(y) - y) in -41..41 : TRUE;
+  (next(x) - x) = 35 & (next(y) - y) in -41..41 : TRUE;
+  (next(x) - x) = 36 & (next(y) - y) in -40..40 : TRUE;
+  (next(x) - x) = 37 & (next(y) - y) in -39..39 : TRUE;
+  (next(x) - x) = 38 & (next(y) - y) in -38..38 : TRUE;
+  (next(x) - x) = 39 & (next(y) - y) in -37..37 : TRUE;
+  (next(x) - x) = 40 & (next(y) - y) in -36..36 : TRUE;
+  (next(x) - x) = 41 & (next(y) - y) in -35..35 : TRUE;
+  (next(x) - x) = 42 & (next(y) - y) in -33..33 : TRUE;
+  (next(x) - x) = 43 & (next(y) - y) in -32..32 : TRUE;
+  (next(x) - x) = 44 & (next(y) - y) in -31..31 : TRUE;
+  (next(x) - x) = 45 & (next(y) - y) in -29..29 : TRUE;
+  (next(x) - x) = 46 & (next(y) - y) in -28..28 : TRUE;
+  (next(x) - x) = 47 & (next(y) - y) in -26..26 : TRUE;
+  (next(x) - x) = 48 & (next(y) - y) in -24..24 : TRUE;
+  (next(x) - x) = 49 & (next(y) - y) in -22..22 : TRUE;
+  (next(x) - x) = 50 & (next(y) - y) in -20..20 : TRUE;
+  (next(x) - x) = 51 & (next(y) - y) in -17..17 : TRUE;
+  (next(x) - x) = 52 & (next(y) - y) in -14..14 : TRUE;
+  (next(x) - x) = 53 & (next(y) - y) in -10..10 : TRUE;
+  (next(x) - x) = 54 & (next(y) - y) = 0 : TRUE;
+  TRUE : FALSE;
+esac;
 
     DeadPointReached :=
 case
@@ -3315,7 +3499,7 @@ MODULE World
   	d_max_x := 736; -- 2D world's width
   	d_max_y := 414; -- 2D world's height
   	d_penguin_pushed_index_max := 10; -- maximum index penguin can have when pushed
-  	d_penguin_pushed_velocity_max := 50; -- maximum velocity penguin can have when pushed 
+  	d_penguin_pushed_velocity_max := 20; -- maximum velocity penguin can have when pushed 
 
 MODULE MovementTestBehavior
   VAR

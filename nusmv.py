@@ -47,33 +47,52 @@ def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     moves = movement.moves(penguinspec.movevel)
     definitions.append(moveexp(moves, "MovePosChanged"))
 
-    pngvels = movement.fricvelext(penguinspec.mass, islandspec.friction, penguinspec.pngvel, 1)
+    possiblevels = list(range(1, penguinspec.pngvel + 1))
+    if penguinspec.movevel > penguinspec.pngvel:
+        possiblevels.append(penguinspec.movevel)
 
-    if penguinspec.movevel in pngvels:
-        possiblevels = pngvels
-    else:
-        possiblevels = pngvels[1:] + [penguinspec.movevel]
-
-    definitions.append(ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(len(pngvels)-1).build()))
-    definitions.append(pgpushingdef(penguinspec, pngvels))
+    definitions.append(ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(15).build()))
+    definitions.append(pgpushingdef(penguinspec))
     definitions.append(pgsbinitdef(penguinspec))
     definitions.append(pngdeadptsdef(islandspec, possiblevels))
     definitions.append(coldetecteddf(penguinspec.radius, penguinspec.radius, "CollisionDetected"))
+    definitions += pgpusheddefs(islandspec, penguinspec, possiblevels)
 
     return definitions
 
-def pgpushingdef(penguinspec, pngvels):
-    pngmovecase = CaseDefinitionBuilder("PushingPosChanged")
-    pngindexp = ExpressionBuilder("pushing_index")
-    expconj = lambda exp1, exp2: exp1.withand(exp2)
-    for pngind in range(1, len(pngvels)):
-        pngmoves = movement.moves(pngvels[pngind])
 
-        casedef = movecase(pngmoves, pngmovecase.name())
-        casedef = casedef.withexpappended(pngindexp.witheq(ExpressionBuilder(pngind)), expconj)
-        pngmovecase = pngmovecase.combined(casedef)
+def pgpushingdef(penguinspec):
+    pngmoves = movement.moves(penguinspec.pngvel)
+    return movecase(pngmoves, "PushingPosChanged")
 
-    return pngmovecase
+
+def pgpusheddefs(islandspec, penguinspec, possible_velocities):
+    position_def = CaseDefinitionBuilder("PushedPosChanged")
+    index_init_def = CaseDefinitionBuilder("PushedInitIndex")
+    index_exp = ExpressionBuilder("pushed_index")
+    velocity_exp = ExpressionBuilder("pushed_velocity")
+    append = lambda exp1, exp2: exp1.withand(exp2)
+    max_index = 0
+
+    for v in possible_velocities:
+        pushed_list = movement.fricvelext(penguinspec.mass, islandspec.friction, v, 1)
+        max_value_exp = ExpressionBuilder(len(pushed_list))
+        index_init_def = index_init_def.withcase(velocity_exp.witheq(ExpressionBuilder(v)).build(), max_value_exp.build())
+
+        if len(pushed_list) > max_index:
+            max_index = len(pushed_list)
+
+        for index in range(1, len(pushed_list)):
+            pushed_moves = movement.moves(pushed_list[index])
+            temp_case = movecase(pushed_moves, position_def.name())
+            temp_case = temp_case.withexpappended(index_exp.witheq(ExpressionBuilder(index)), append)
+            position_def = position_def.combined(temp_case)
+
+    index_init_def = index_init_def.withcase(ExpressionBuilder.true().build(), ExpressionBuilder(0).build())
+    position_def = position_def.withcase(ExpressionBuilder.true().build(), ExpressionBuilder.false().build())
+    max_index_def = ExpressionDefinitionBuilder("d_penguin_pushed_index_max").withexp(ExpressionBuilder(max_index).build())
+
+    return [max_index_def, index_init_def, position_def]
 
 
 def pgsbinitdef(penguinspec):
