@@ -79,8 +79,8 @@ def pgpushingdef(penguinspec, pngvels):
 def pgsbinitdef(penguinspec):
     casedef = CaseDefinitionBuilder("SnowballInit")
     direxp = ExpressionBuilder("snowball.direction").withnext()
-    nxexp = ExpressionBuilder("snowball.x").withnext().withsub(ExpressionBuilder("x").withnext())
-    nyexp = ExpressionBuilder("snowball.y").withnext().withsub(ExpressionBuilder("y").withnext())
+    nxexp = ExpressionBuilder("snowball.x").withnext().withsub(ExpressionBuilder("x")).withparen()
+    nyexp = ExpressionBuilder("snowball.y").withnext().withsub(ExpressionBuilder("y")).withparen()
 
     offsets = movement.pointrot(penguinspec.sbox, penguinspec.sboy)
     direction = 0

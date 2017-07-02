@@ -16,8 +16,11 @@ def moves(velocity):
 
 def pointrot(x, y):
     points = []
+
     for direction in range(0, 360):
-        points.append((round(x*math.cos(math.radians(direction))), round(y*math.sin(math.radians(direction)))))
+        rx = x*math.cos(math.radians(direction)) - y*math.sin(math.radians(direction))
+        ry = x * math.sin(math.radians(direction)) + y*math.cos(math.radians(direction))
+        points.append((round(rx), round(ry)))
     return points
 
 

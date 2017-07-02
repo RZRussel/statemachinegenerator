@@ -1135,13 +1135,6 @@ esac;
     fly_flag: boolean; -- flag states whether the snowball was thrown and active --
     direction: 0..359; -- current flying direction --
 
-  -- initial state --
-  ASSIGN 
-    init(x) := 0;
-    init(y) := 0;
-    init(direction) := 0;
-    init(fly_flag) := FALSE;
-
   DEFINE
     Deact := !fly_flag & !next(fly_flag) 
       & next(x) = x & next(y) = y 
@@ -1157,16 +1150,13 @@ esac;
 
     Act := owner.Throw | owner.ThrowWhilePushed;
 
-  -- snowball's state possible transitions --
-  TRANS
-    Fly & !Act & !Deact & !Collide
-    | !Fly & Act & !Deact & !Collide
-    | !Fly & !Act & Deact & !Collide
-    | !Fly & !Act & !Deact & Collide;
-
-
+    ValidAction := Fly & !Act & !Deact & !Collide
+      | !Fly & Act & !Deact & !Collide
+      | !Fly & !Act & Deact & !Collide
+      | !Fly & !Act & !Deact & Collide;
+  
 -- Module for modeling penguin actor --
-MODULE Penguin(world, init_x, init_y, init_dir, opponent)
+MODULE Penguin(world, opponent)
 	
   -- constants --
   DEFINE
@@ -1222,7 +1212,147 @@ MODULE Penguin(world, init_x, init_y, init_dir, opponent)
  | direction in 343..354 & (next(x) - x) = 5 & (next(y) - y) = -1
  | direction in 355..359 & (next(x) - x) = 5 & (next(y) - y) = 0;
 
-    SnowballInit := FALSE;
+    SnowballInit :=
+case
+  next(snowball.direction) = 0 & (next(snowball.x) - x) = 10 & (next(snowball.y) - y) = 15 : TRUE;
+  next(snowball.direction) = 2 & (next(snowball.x) - x) = 9 & (next(snowball.y) - y) = 15 : TRUE;
+  next(snowball.direction) = 3 & (next(snowball.x) - x) = 9 & (next(snowball.y) - y) = 16 : TRUE;
+  next(snowball.direction) = 6 & (next(snowball.x) - x) = 8 & (next(snowball.y) - y) = 16 : TRUE;
+  next(snowball.direction) = 10 & (next(snowball.x) - x) = 7 & (next(snowball.y) - y) = 17 : TRUE;
+  next(snowball.direction) = 13 & (next(snowball.x) - x) = 6 & (next(snowball.y) - y) = 17 : TRUE;
+  next(snowball.direction) = 16 & (next(snowball.x) - x) = 5 & (next(snowball.y) - y) = 17 : TRUE;
+  next(snowball.direction) = 20 & (next(snowball.x) - x) = 4 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 23 & (next(snowball.x) - x) = 3 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 26 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 29 & (next(snowball.x) - x) = 1 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 33 & (next(snowball.x) - x) = 0 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 36 & (next(snowball.x) - x) = -1 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 39 & (next(snowball.x) - x) = -2 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 42 & (next(snowball.x) - x) = -3 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 45 & (next(snowball.x) - x) = -4 & (next(snowball.y) - y) = 18 : TRUE;
+  next(snowball.direction) = 48 & (next(snowball.x) - x) = -4 & (next(snowball.y) - y) = 17 : TRUE;
+  next(snowball.direction) = 49 & (next(snowball.x) - x) = -5 & (next(snowball.y) - y) = 17 : TRUE;
+  next(snowball.direction) = 52 & (next(snowball.x) - x) = -6 & (next(snowball.y) - y) = 17 : TRUE;
+  next(snowball.direction) = 55 & (next(snowball.x) - x) = -7 & (next(snowball.y) - y) = 17 : TRUE;
+  next(snowball.direction) = 58 & (next(snowball.x) - x) = -7 & (next(snowball.y) - y) = 16 : TRUE;
+  next(snowball.direction) = 59 & (next(snowball.x) - x) = -8 & (next(snowball.y) - y) = 16 : TRUE;
+  next(snowball.direction) = 62 & (next(snowball.x) - x) = -9 & (next(snowball.y) - y) = 16 : TRUE;
+  next(snowball.direction) = 65 & (next(snowball.x) - x) = -9 & (next(snowball.y) - y) = 15 : TRUE;
+  next(snowball.direction) = 66 & (next(snowball.x) - x) = -10 & (next(snowball.y) - y) = 15 : TRUE;
+  next(snowball.direction) = 70 & (next(snowball.x) - x) = -11 & (next(snowball.y) - y) = 15 : TRUE;
+  next(snowball.direction) = 71 & (next(snowball.x) - x) = -11 & (next(snowball.y) - y) = 14 : TRUE;
+  next(snowball.direction) = 74 & (next(snowball.x) - x) = -12 & (next(snowball.y) - y) = 14 : TRUE;
+  next(snowball.direction) = 76 & (next(snowball.x) - x) = -12 & (next(snowball.y) - y) = 13 : TRUE;
+  next(snowball.direction) = 78 & (next(snowball.x) - x) = -13 & (next(snowball.y) - y) = 13 : TRUE;
+  next(snowball.direction) = 80 & (next(snowball.x) - x) = -13 & (next(snowball.y) - y) = 12 : TRUE;
+  next(snowball.direction) = 83 & (next(snowball.x) - x) = -14 & (next(snowball.y) - y) = 12 : TRUE;
+  next(snowball.direction) = 85 & (next(snowball.x) - x) = -14 & (next(snowball.y) - y) = 11 : TRUE;
+  next(snowball.direction) = 88 & (next(snowball.x) - x) = -15 & (next(snowball.y) - y) = 11 : TRUE;
+  next(snowball.direction) = 89 & (next(snowball.x) - x) = -15 & (next(snowball.y) - y) = 10 : TRUE;
+  next(snowball.direction) = 92 & (next(snowball.x) - x) = -15 & (next(snowball.y) - y) = 9 : TRUE;
+  next(snowball.direction) = 93 & (next(snowball.x) - x) = -16 & (next(snowball.y) - y) = 9 : TRUE;
+  next(snowball.direction) = 96 & (next(snowball.x) - x) = -16 & (next(snowball.y) - y) = 8 : TRUE;
+  next(snowball.direction) = 100 & (next(snowball.x) - x) = -17 & (next(snowball.y) - y) = 7 : TRUE;
+  next(snowball.direction) = 103 & (next(snowball.x) - x) = -17 & (next(snowball.y) - y) = 6 : TRUE;
+  next(snowball.direction) = 106 & (next(snowball.x) - x) = -17 & (next(snowball.y) - y) = 5 : TRUE;
+  next(snowball.direction) = 110 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = 4 : TRUE;
+  next(snowball.direction) = 113 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = 3 : TRUE;
+  next(snowball.direction) = 116 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = 2 : TRUE;
+  next(snowball.direction) = 119 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = 1 : TRUE;
+  next(snowball.direction) = 123 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = 0 : TRUE;
+  next(snowball.direction) = 126 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = -1 : TRUE;
+  next(snowball.direction) = 129 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = -2 : TRUE;
+  next(snowball.direction) = 132 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = -3 : TRUE;
+  next(snowball.direction) = 135 & (next(snowball.x) - x) = -18 & (next(snowball.y) - y) = -4 : TRUE;
+  next(snowball.direction) = 138 & (next(snowball.x) - x) = -17 & (next(snowball.y) - y) = -4 : TRUE;
+  next(snowball.direction) = 139 & (next(snowball.x) - x) = -17 & (next(snowball.y) - y) = -5 : TRUE;
+  next(snowball.direction) = 142 & (next(snowball.x) - x) = -17 & (next(snowball.y) - y) = -6 : TRUE;
+  next(snowball.direction) = 145 & (next(snowball.x) - x) = -17 & (next(snowball.y) - y) = -7 : TRUE;
+  next(snowball.direction) = 148 & (next(snowball.x) - x) = -16 & (next(snowball.y) - y) = -7 : TRUE;
+  next(snowball.direction) = 149 & (next(snowball.x) - x) = -16 & (next(snowball.y) - y) = -8 : TRUE;
+  next(snowball.direction) = 152 & (next(snowball.x) - x) = -16 & (next(snowball.y) - y) = -9 : TRUE;
+  next(snowball.direction) = 155 & (next(snowball.x) - x) = -15 & (next(snowball.y) - y) = -9 : TRUE;
+  next(snowball.direction) = 156 & (next(snowball.x) - x) = -15 & (next(snowball.y) - y) = -10 : TRUE;
+  next(snowball.direction) = 160 & (next(snowball.x) - x) = -15 & (next(snowball.y) - y) = -11 : TRUE;
+  next(snowball.direction) = 161 & (next(snowball.x) - x) = -14 & (next(snowball.y) - y) = -11 : TRUE;
+  next(snowball.direction) = 164 & (next(snowball.x) - x) = -14 & (next(snowball.y) - y) = -12 : TRUE;
+  next(snowball.direction) = 166 & (next(snowball.x) - x) = -13 & (next(snowball.y) - y) = -12 : TRUE;
+  next(snowball.direction) = 168 & (next(snowball.x) - x) = -13 & (next(snowball.y) - y) = -13 : TRUE;
+  next(snowball.direction) = 170 & (next(snowball.x) - x) = -12 & (next(snowball.y) - y) = -13 : TRUE;
+  next(snowball.direction) = 173 & (next(snowball.x) - x) = -12 & (next(snowball.y) - y) = -14 : TRUE;
+  next(snowball.direction) = 175 & (next(snowball.x) - x) = -11 & (next(snowball.y) - y) = -14 : TRUE;
+  next(snowball.direction) = 178 & (next(snowball.x) - x) = -11 & (next(snowball.y) - y) = -15 : TRUE;
+  next(snowball.direction) = 179 & (next(snowball.x) - x) = -10 & (next(snowball.y) - y) = -15 : TRUE;
+  next(snowball.direction) = 182 & (next(snowball.x) - x) = -9 & (next(snowball.y) - y) = -15 : TRUE;
+  next(snowball.direction) = 183 & (next(snowball.x) - x) = -9 & (next(snowball.y) - y) = -16 : TRUE;
+  next(snowball.direction) = 186 & (next(snowball.x) - x) = -8 & (next(snowball.y) - y) = -16 : TRUE;
+  next(snowball.direction) = 190 & (next(snowball.x) - x) = -7 & (next(snowball.y) - y) = -17 : TRUE;
+  next(snowball.direction) = 193 & (next(snowball.x) - x) = -6 & (next(snowball.y) - y) = -17 : TRUE;
+  next(snowball.direction) = 196 & (next(snowball.x) - x) = -5 & (next(snowball.y) - y) = -17 : TRUE;
+  next(snowball.direction) = 200 & (next(snowball.x) - x) = -4 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 203 & (next(snowball.x) - x) = -3 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 206 & (next(snowball.x) - x) = -2 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 209 & (next(snowball.x) - x) = -1 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 213 & (next(snowball.x) - x) = 0 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 216 & (next(snowball.x) - x) = 1 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 219 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 222 & (next(snowball.x) - x) = 3 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 225 & (next(snowball.x) - x) = 4 & (next(snowball.y) - y) = -18 : TRUE;
+  next(snowball.direction) = 228 & (next(snowball.x) - x) = 4 & (next(snowball.y) - y) = -17 : TRUE;
+  next(snowball.direction) = 229 & (next(snowball.x) - x) = 5 & (next(snowball.y) - y) = -17 : TRUE;
+  next(snowball.direction) = 232 & (next(snowball.x) - x) = 6 & (next(snowball.y) - y) = -17 : TRUE;
+  next(snowball.direction) = 235 & (next(snowball.x) - x) = 7 & (next(snowball.y) - y) = -17 : TRUE;
+  next(snowball.direction) = 238 & (next(snowball.x) - x) = 7 & (next(snowball.y) - y) = -16 : TRUE;
+  next(snowball.direction) = 239 & (next(snowball.x) - x) = 8 & (next(snowball.y) - y) = -16 : TRUE;
+  next(snowball.direction) = 242 & (next(snowball.x) - x) = 9 & (next(snowball.y) - y) = -16 : TRUE;
+  next(snowball.direction) = 245 & (next(snowball.x) - x) = 9 & (next(snowball.y) - y) = -15 : TRUE;
+  next(snowball.direction) = 246 & (next(snowball.x) - x) = 10 & (next(snowball.y) - y) = -15 : TRUE;
+  next(snowball.direction) = 250 & (next(snowball.x) - x) = 11 & (next(snowball.y) - y) = -15 : TRUE;
+  next(snowball.direction) = 251 & (next(snowball.x) - x) = 11 & (next(snowball.y) - y) = -14 : TRUE;
+  next(snowball.direction) = 254 & (next(snowball.x) - x) = 12 & (next(snowball.y) - y) = -14 : TRUE;
+  next(snowball.direction) = 256 & (next(snowball.x) - x) = 12 & (next(snowball.y) - y) = -13 : TRUE;
+  next(snowball.direction) = 258 & (next(snowball.x) - x) = 13 & (next(snowball.y) - y) = -13 : TRUE;
+  next(snowball.direction) = 260 & (next(snowball.x) - x) = 13 & (next(snowball.y) - y) = -12 : TRUE;
+  next(snowball.direction) = 263 & (next(snowball.x) - x) = 14 & (next(snowball.y) - y) = -12 : TRUE;
+  next(snowball.direction) = 265 & (next(snowball.x) - x) = 14 & (next(snowball.y) - y) = -11 : TRUE;
+  next(snowball.direction) = 268 & (next(snowball.x) - x) = 15 & (next(snowball.y) - y) = -11 : TRUE;
+  next(snowball.direction) = 269 & (next(snowball.x) - x) = 15 & (next(snowball.y) - y) = -10 : TRUE;
+  next(snowball.direction) = 272 & (next(snowball.x) - x) = 15 & (next(snowball.y) - y) = -9 : TRUE;
+  next(snowball.direction) = 273 & (next(snowball.x) - x) = 16 & (next(snowball.y) - y) = -9 : TRUE;
+  next(snowball.direction) = 276 & (next(snowball.x) - x) = 16 & (next(snowball.y) - y) = -8 : TRUE;
+  next(snowball.direction) = 280 & (next(snowball.x) - x) = 17 & (next(snowball.y) - y) = -7 : TRUE;
+  next(snowball.direction) = 283 & (next(snowball.x) - x) = 17 & (next(snowball.y) - y) = -6 : TRUE;
+  next(snowball.direction) = 286 & (next(snowball.x) - x) = 17 & (next(snowball.y) - y) = -5 : TRUE;
+  next(snowball.direction) = 290 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = -4 : TRUE;
+  next(snowball.direction) = 293 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = -3 : TRUE;
+  next(snowball.direction) = 296 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = -2 : TRUE;
+  next(snowball.direction) = 299 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = -1 : TRUE;
+  next(snowball.direction) = 303 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = 0 : TRUE;
+  next(snowball.direction) = 306 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = 1 : TRUE;
+  next(snowball.direction) = 309 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = 2 : TRUE;
+  next(snowball.direction) = 312 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = 3 : TRUE;
+  next(snowball.direction) = 315 & (next(snowball.x) - x) = 18 & (next(snowball.y) - y) = 4 : TRUE;
+  next(snowball.direction) = 318 & (next(snowball.x) - x) = 17 & (next(snowball.y) - y) = 4 : TRUE;
+  next(snowball.direction) = 319 & (next(snowball.x) - x) = 17 & (next(snowball.y) - y) = 5 : TRUE;
+  next(snowball.direction) = 322 & (next(snowball.x) - x) = 17 & (next(snowball.y) - y) = 6 : TRUE;
+  next(snowball.direction) = 325 & (next(snowball.x) - x) = 17 & (next(snowball.y) - y) = 7 : TRUE;
+  next(snowball.direction) = 328 & (next(snowball.x) - x) = 16 & (next(snowball.y) - y) = 7 : TRUE;
+  next(snowball.direction) = 329 & (next(snowball.x) - x) = 16 & (next(snowball.y) - y) = 8 : TRUE;
+  next(snowball.direction) = 332 & (next(snowball.x) - x) = 16 & (next(snowball.y) - y) = 9 : TRUE;
+  next(snowball.direction) = 335 & (next(snowball.x) - x) = 15 & (next(snowball.y) - y) = 9 : TRUE;
+  next(snowball.direction) = 336 & (next(snowball.x) - x) = 15 & (next(snowball.y) - y) = 10 : TRUE;
+  next(snowball.direction) = 340 & (next(snowball.x) - x) = 15 & (next(snowball.y) - y) = 11 : TRUE;
+  next(snowball.direction) = 341 & (next(snowball.x) - x) = 14 & (next(snowball.y) - y) = 11 : TRUE;
+  next(snowball.direction) = 344 & (next(snowball.x) - x) = 14 & (next(snowball.y) - y) = 12 : TRUE;
+  next(snowball.direction) = 346 & (next(snowball.x) - x) = 13 & (next(snowball.y) - y) = 12 : TRUE;
+  next(snowball.direction) = 348 & (next(snowball.x) - x) = 13 & (next(snowball.y) - y) = 13 : TRUE;
+  next(snowball.direction) = 350 & (next(snowball.x) - x) = 12 & (next(snowball.y) - y) = 13 : TRUE;
+  next(snowball.direction) = 353 & (next(snowball.x) - x) = 12 & (next(snowball.y) - y) = 14 : TRUE;
+  next(snowball.direction) = 355 & (next(snowball.x) - x) = 11 & (next(snowball.y) - y) = 14 : TRUE;
+  next(snowball.direction) = 358 & (next(snowball.x) - x) = 11 & (next(snowball.y) - y) = 15 : TRUE;
+  next(snowball.direction) = 359 & (next(snowball.x) - x) = 10 & (next(snowball.y) - y) = 15 : TRUE;
+  TRUE : FALSE;
+esac;
     
     PushingPosChanged :=
 case
@@ -2991,21 +3121,6 @@ esac;
   	snowball_timer: 0..d_snowball_timer_max; -- current remained time during which a penguin can't perform throw action
     snowball: Snowball(world, self); -- penguin's snoball reference
 
-  -- initial state --
-  ASSIGN
-    init(x) := init_x;
-    init(y) := init_y;
-    init(direction) := init_dir;
-    init(stun_timer) := 0;
-    init(pushing_index) := 0;
-    init(pushing_timer) := 0;
-    init(pushed_index) := 0;
-    init(pushed_velocity) := 0;
-    init(dead) := FALSE;
-    init(penguin_collision) := 0b_0;
-    init(snowball_collision) := 0b_0;
-    init(snowball_timer) := 0;
-
 -- action definitions --
   DEFINE
     Move := MovePosChanged 
@@ -3184,9 +3299,6 @@ esac;
         | !Move & !Throw & !ThrowWhilePushed & !Push & !Stay & !Pushing & !Pushed & !CollidePenguin & !CollideSnowball
           & !CollideSnowballPenguin & Dead;
 
-  TRANS
-    ValidAction;
-
 -- Module for modeling island actor --
 MODULE Island(world)
   
@@ -3205,15 +3317,61 @@ MODULE World
   	d_penguin_pushed_index_max := 10; -- maximum index penguin can have when pushed
   	d_penguin_pushed_velocity_max := 50; -- maximum velocity penguin can have when pushed 
 
+MODULE MovementTestBehavior
   VAR
-  	i: Island(self); -- there is 1 island in the world
-    p1: Penguin(self, 300, 207, 0, p2); -- there are 2 penguins in the world
-    p2: Penguin(self, 432, 207, 180, p1);
+    world: World;
+    island: Island(world);
+    p1: Penguin(world, p2);
+    p2: Penguin(world, p1);
+
+  ASSIGN
+    init(p1.x) := 300;
+    init(p1.y) := 207;
+    init(p1.direction) := 0;
+    init(p1.dead) := FALSE;
+    p1.stun_timer := 0;
+    p1.pushing_index := 0;
+    p1.pushing_timer := 0;
+    p1.pushed_index := 0;
+    p1.pushed_velocity := 0;
+    p1.penguin_collision := 0b_0;
+    p1.snowball_collision := 0b_0;
+    init(p1.snowball_timer) := 0;
+    init(p1.snowball.x) := 0;
+    init(p1.snowball.y) := 0;
+    init(p1.snowball.direction) := 0;
+    init(p1.snowball.fly_flag) := FALSE;
+
+    p2.x := 368;
+    p2.y := 207;
+    p2.direction := 180;
+    p2.dead := TRUE;
+    p2.stun_timer := 0;
+    p2.pushing_index := 0;
+    p2.pushing_timer := 0;
+    p2.pushed_index := 0;
+    p2.pushed_velocity := 0;
+    p2.penguin_collision := 0b_0;
+    p2.snowball_collision := 0b_0;
+    p2.snowball_timer := 0;
+    p2.snowball.x := 0;
+    p2.snowball.y := 0;
+    p2.snowball.fly_flag := FALSE;
+    p2.snowball.direction := 0;
+
+  TRANS
+    p1.Throw & !p1.Stay | !p1.Throw & p1.Stay;
+
+  TRANS
+    p1.snowball.ValidAction;
+
+  CTLSPEC
+    AG EF (p1.snowball.fly_flag & p1.snowball_timer > 0 & AF (!p1.snowball.fly_flag & p1.snowball_timer = 0));
+
+  CTLSPEC
+    AG (!p1.dead);
 
 MODULE main  
 
   VAR
-    world: World;
-
-  CTLSPEC
-    AG EF (world.p1.dead | world.p2.dead); -- from any game state there is an opportunity to finish the game
+    test: MovementTestBehavior;
