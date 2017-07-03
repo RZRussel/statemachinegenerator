@@ -23488,9 +23488,9 @@ MODULE MovementTestBehavior
     p1.stun_timer := 0;
     p1.pushing_index := 0;
     p1.pushing_timer := 0;
-    p1.pushed_index := 0;
-    p1.pushed_velocity := 0;
-    p1.penguin_collision := 0b_0;
+    init(p1.pushed_index) := 0;
+    init(p1.pushed_velocity) := 0;
+    init(p1.penguin_collision) := 0b_0;
     p1.snowball_collision := 0b_0;
     p1.snowball_timer := 0;
     p1.snowball.x := 0;
@@ -23498,16 +23498,16 @@ MODULE MovementTestBehavior
     p1.snowball.direction := 0;
     p1.snowball.fly_flag := FALSE;
 
-    p2.x := 368;
-    p2.y := 207;
-    p2.direction := 180;
-    p2.dead := TRUE;
+    init(p2.x) := 368;
+    init(p2.y) := 207;
+    init(p2.direction) := 180;
+    init(p2.dead) := FALSE;
     p2.stun_timer := 0;
     p2.pushing_index := 0;
     p2.pushing_timer := 0;
-    p2.pushed_index := 0;
-    p2.pushed_velocity := 0;
-    p2.penguin_collision := 0b_0;
+    init(p2.pushed_index) := 0;
+    init(p2.pushed_velocity) := 0;
+    init(p2.penguin_collision) := 0b_0;
     p2.snowball_collision := 0b_0;
     p2.snowball_timer := 0;
     p2.snowball.x := 0;
@@ -23516,10 +23516,13 @@ MODULE MovementTestBehavior
     p2.snowball.direction := 0;
 
   TRANS
-    p1.Move | p1.Dead;
+    p1.Move | p1.Pushed | p1.CollidePenguin | p1.Dead;
+
+  TRANS
+    p2.Stay | p2.Pushed | p2.CollidePenguin | p2.Dead;
 
   CTLSPEC
-    AG EF (!p1.dead);
+    AG EF (p2.dead);
 
 MODULE main  
 
