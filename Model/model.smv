@@ -23303,7 +23303,7 @@ esac;
       & SnowballInit
       & !snowball.fly_flag & next(snowball.fly_flag);
 
-    ThrowWhilePushed := next(x) = x + PushedOx & next(y) = y + PushedOy & next(direction) = direction
+    ThrowWhilePushed := PushedPosChanged & next(direction) = direction
       & StunTimerDeact
       & pushing_index = 0 & next(pushing_index) = 0
       & (PushingTimerDeact | PushingTimerTick)
@@ -23519,7 +23519,7 @@ MODULE MovementTestBehavior
     p1.Move | p1.Dead;
 
   CTLSPEC
-    AG EF (p1.dead);
+    AG EF (!p1.dead);
 
 MODULE main  
 
