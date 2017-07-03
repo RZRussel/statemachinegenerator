@@ -2,7 +2,7 @@ import yaml
 import specification
 from nusmvbdr import ExpressionBuilder, ExpressionDefinitionBuilder, CaseDefinitionBuilder
 import movement
-
+import math
 
 def genmodel(in_file, out_file):
     specstream = open(in_file, "r")
@@ -30,16 +30,19 @@ def sbdefinitions(worldspec, islandspec, penguinspec, snowballspec):
 
     flies = movement.moves(snowballspec.flyvel)
     definitions.append(movecase(flies, "FlightPosChanged"))
-    definitions.append(coldetecteddf(penguinspec.radius, snowballspec.radius, "CollisionDetected"))
+    collision_offsets = collisionoffsets(penguinspec.radius, snowballspec.radius)
+    definitions.append(coldetecteddf("CollisionDetected", collision_offsets))
     definitions.append(sbdeadptsdefs(islandspec, snowballspec))
 
     return definitions
+
 
 def sbdeadptsdefs(islandspec, snowballspec):
     containsfunc = lambda point: islandspec.contains(point)
     combineddpts = deadpoints([snowballspec.flyvel], islandspec.centerx, islandspec.centery, islandspec.bradius,
                               islandspec.sradius, containsfunc)
     return deadptsdef(combineddpts, "DeadPointReached")
+
 
 def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     definitions = []
@@ -55,8 +58,11 @@ def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     definitions.append(pgpushingdef(penguinspec))
     definitions.append(pgsbinitdef(penguinspec))
     definitions.append(pngdeadptsdef(islandspec, possiblevels))
-    definitions.append(coldetecteddf(penguinspec.radius, penguinspec.radius, "CollisionDetected"))
+    collision_offsets = collisionoffsets(penguinspec.radius, penguinspec.radius)
+    definitions.append(coldetecteddf("CollisionDetected", collision_offsets))
     definitions += pgpusheddefs(islandspec, penguinspec, possiblevels)
+    definitions.append(pgconstcollisiondef("StaticCollisionInitialized", penguinspec.movevel, collision_offsets))
+    definitions.append(pgconstcollisiondef("PushingCollisionInitialized", penguinspec.pngvel, collision_offsets))
 
     return definitions
 
@@ -76,16 +82,17 @@ def pgpusheddefs(islandspec, penguinspec, possible_velocities):
 
     for v in possible_velocities:
         pushed_list = movement.fricvelext(penguinspec.mass, islandspec.friction, v, 1)
-        max_value_exp = ExpressionBuilder(len(pushed_list))
-        index_init_def = index_init_def.withcase(velocity_exp.witheq(ExpressionBuilder(v)).build(), max_value_exp.build())
+        max_value_exp = ExpressionBuilder(len(pushed_list) - 1)
+        index_init_def = index_init_def.withcase(velocity_exp.withnext().witheq(ExpressionBuilder(v)).build(), max_value_exp.build())
 
         if len(pushed_list) > max_index:
-            max_index = len(pushed_list)
+            max_index = len(pushed_list) - 1
 
         for index in range(1, len(pushed_list)):
             pushed_moves = movement.moves(pushed_list[index])
             temp_case = movecase(pushed_moves, position_def.name())
             temp_case = temp_case.withexpappended(index_exp.witheq(ExpressionBuilder(index)), append)
+            temp_case = temp_case.withexpappended(velocity_exp.witheq(ExpressionBuilder(v)), append)
             position_def = position_def.combined(temp_case)
 
     index_init_def = index_init_def.withcase(ExpressionBuilder.true().build(), ExpressionBuilder(0).build())
@@ -93,6 +100,42 @@ def pgpusheddefs(islandspec, penguinspec, possible_velocities):
     max_index_def = ExpressionDefinitionBuilder("d_penguin_pushed_index_max").withexp(ExpressionBuilder(max_index).build())
 
     return [max_index_def, index_init_def, position_def]
+
+
+def pgconstcollisiondef(name, velocity, collision_offsets):
+    collision_def = CaseDefinitionBuilder(name)
+    ox_exp = ExpressionBuilder("opponent.x - x").withparen()
+    oy_exp = ExpressionBuilder("opponent.y - y").withparen()
+    ndir_exp = ExpressionBuilder("direction").withnext()
+    nvel_exp = ExpressionBuilder("pushed_velocity").withnext().witheq(ExpressionBuilder(velocity))
+
+    for x, yList in collision_offsets.items():
+        tox_exp = ox_exp.witheq(ExpressionBuilder(x))
+        for y in yList:
+            toy_exp = oy_exp.witheq(ExpressionBuilder(y))
+
+            if x == 0:
+                if y > 0:
+                    next_direction = 270
+                else:
+                    next_direction = 90
+            elif x > 0 and y >= 0:
+                next_direction = 180 + round(math.atan(y/x)*180/math.pi)
+            elif x > 0 and y < 0:
+                next_direction = 180 - round(math.atan(-y / x) * 180 / math.pi)
+            elif x < 0 and y > 0:
+                next_direction = round(math.atan(y / x) * 180 / math.pi)
+            elif x < 0 and y <= 0:
+                next_direction = round(math.atan(-y / -x) * 180 / math.pi)
+
+            case_exp = tox_exp.withand(toy_exp)
+            case_exp = case_exp.withand(ndir_exp.witheq(ExpressionBuilder(next_direction)))
+            case_exp = case_exp.withand(nvel_exp)
+
+            collision_def = collision_def.withcase(case_exp.build(), ExpressionBuilder.true().build())
+
+    collision_def = collision_def.withcase(ExpressionBuilder.true().build(), ExpressionBuilder.false().build())
+    return collision_def
 
 
 def pgsbinitdef(penguinspec):
@@ -126,6 +169,7 @@ def pngdeadptsdef(islandspec, velocities):
                               islandspec.sradius, containsfunc)
     return deadptsdef(combineddpts, "DeadPointReached")
 
+
 def deadptsdef(combinedpts, name):
     casedef = CaseDefinitionBuilder(name)
     nexpx = ExpressionBuilder("x").withnext()
@@ -148,21 +192,13 @@ def deadptsdef(combinedpts, name):
 
     return casedef
 
-def coldetecteddf(srcrad, destrad, name):
-    colradius = srcrad + destrad
 
+def coldetecteddf(name, offsets):
     casedef = CaseDefinitionBuilder(name)
     xexp = ExpressionBuilder("x")
     yexp = ExpressionBuilder("y")
     nexpx = xexp.withnext().withsub(xexp).withparen()
     nexpy = yexp.withnext().withsub(yexp).withparen()
-    offsets = {}
-    for x in range(-colradius, colradius + 1):
-        for y in range(-colradius, colradius + 1):
-            if x * x + y * y <= colradius * colradius:
-                if x not in offsets:
-                    offsets[x] = []
-                offsets[x].append(y)
 
     for x, yList in offsets.items():
         base = 0
@@ -180,6 +216,7 @@ def coldetecteddf(srcrad, destrad, name):
     casedef = casedef.withcase(ExpressionBuilder.true().build(), ExpressionBuilder.false().build())
 
     return casedef
+
 
 def deadpoints(velocities, centerX, centerY, hrad, vrad, containsfunc):
     veldic = {}
@@ -207,6 +244,7 @@ def deadpoints(velocities, centerX, centerY, hrad, vrad, containsfunc):
                             dpoints.append((2 * centerX - ix - ox, 2 * centerY - iy - oy))
 
     return combinepoints(dpoints)
+
 
 def moveexp(points, name):
     fullexp = None
@@ -275,3 +313,17 @@ def combinepoints(points):
         pointsdic[x] = sorted(pointsdic[x])
 
     return pointsdic
+
+
+def collisionoffsets(srcrad, destrad):
+    colradius = srcrad + destrad
+
+    offsets = {}
+    for x in range(-colradius, colradius + 1):
+        for y in range(-colradius, colradius + 1):
+            if x * x + y * y <= colradius * colradius:
+                if x not in offsets:
+                    offsets[x] = []
+                offsets[x].append(y)
+
+    return offsets
