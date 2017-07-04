@@ -30,8 +30,8 @@ def sbdefinitions(worldspec, islandspec, penguinspec, snowballspec):
 
     flies = movement.moves(snowballspec.flyvel)
     definitions.append(movecase(flies, "FlightPosChanged"))
-    collision_offsets = collisionoffsets(penguinspec.radius, snowballspec.radius)
-    definitions.append(coldetecteddf("CollisionDetected", collision_offsets))
+    collision_offsets = collisionoffsets(penguinspec.radius, penguinspec.pngvel, snowballspec.radius, snowballspec.flyvel)
+    definitions.append(coldetecteddf("CollisionDetected", "owner.opponent", collision_offsets))
     definitions.append(sbdeadptsdefs(islandspec, snowballspec))
 
     return definitions
@@ -54,15 +54,16 @@ def pgdefinitions(worldspec, islandspec, penguinspec, snowballspec):
     if penguinspec.movevel > penguinspec.pngvel:
         possiblevels.append(penguinspec.movevel)
 
-    definitions.append(ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(15).build()))
-    definitions.append(pgpushingdef(penguinspec))
-    definitions.append(pgsbinitdef(penguinspec))
-    definitions.append(pngdeadptsdef(islandspec, possiblevels))
-    collision_offsets = collisionoffsets(penguinspec.radius, penguinspec.radius)
-    definitions.append(coldetecteddf("CollisionDetected", collision_offsets))
-    definitions += pgpusheddefs(islandspec, penguinspec, possiblevels)
-    definitions.append(pgconstcollisiondef("StaticCollisionInitialized", penguinspec.movevel, collision_offsets))
-    definitions.append(pgconstcollisiondef("PushingCollisionInitialized", penguinspec.pngvel, collision_offsets))
+    ##definitions.append(ExpressionDefinitionBuilder("d_pushing_index_max", ExpressionBuilder(15).build()))
+    ##definitions.append(pgpushingdef(penguinspec))
+    ##definitions.append(pgsbinitdef(penguinspec))
+    ##definitions.append(pngdeadptsdef(islandspec, possiblevels))
+    collision_ostat = collisionoffsets(penguinspec.radius, penguinspec.movevel, penguinspec.radius, penguinspec.movevel)
+    collision_opng = collisionoffsets(penguinspec.radius, penguinspec.pngvel, penguinspec.radius, penguinspec.pngvel)
+    definitions.append(coldetecteddf("CollisionDetected", "opponent", collision_opng))
+    ##definitions += pgpusheddefs(islandspec, penguinspec, possiblevels)
+    definitions.append(pgconstcollisiondef("StaticCollisionInitialized", penguinspec.movevel, collision_ostat))
+    definitions.append(pgconstcollisiondef("PushingCollisionInitialized", penguinspec.pngvel, collision_opng))
 
     return definitions
 
@@ -110,26 +111,24 @@ def pgconstcollisiondef(name, velocity, collision_offsets):
     nvel_exp = ExpressionBuilder("pushed_velocity").withnext().witheq(ExpressionBuilder(velocity))
 
     for x, yList in collision_offsets.items():
-        tox_exp = ox_exp.witheq(ExpressionBuilder(x))
+        tx_exp = ox_exp.witheq(ExpressionBuilder(x))
         for y in yList:
-            toy_exp = oy_exp.witheq(ExpressionBuilder(y))
-
+            ty_exp = oy_exp.witheq(ExpressionBuilder(y))
             if x == 0:
                 if y > 0:
                     next_direction = 270
                 else:
                     next_direction = 90
             elif x > 0 and y >= 0:
-                next_direction = 180 + round(math.atan(y/x)*180/math.pi)
+                next_direction = 180 + round(math.atan(y/x) * 180/math.pi)
             elif x > 0 and y < 0:
-                next_direction = 180 - round(math.atan(-y / x) * 180 / math.pi)
+                next_direction = 180 - round(math.atan(-y/x) * 180 / math.pi)
             elif x < 0 and y > 0:
-                next_direction = round(math.atan(y / x) * 180 / math.pi)
+                next_direction = 359 - round(math.atan(y/-x) * 180 / math.pi)
             elif x < 0 and y <= 0:
-                next_direction = round(math.atan(-y / -x) * 180 / math.pi)
+                next_direction = round(math.atan(-y/-x) * 180 / math.pi)
 
-            case_exp = tox_exp.withand(toy_exp)
-            case_exp = case_exp.withand(ndir_exp.witheq(ExpressionBuilder(next_direction)))
+            case_exp = tx_exp.withand(ty_exp).withand(ndir_exp.witheq(ExpressionBuilder(next_direction)))
             case_exp = case_exp.withand(nvel_exp)
 
             collision_def = collision_def.withcase(case_exp.build(), ExpressionBuilder.true().build())
@@ -137,6 +136,98 @@ def pgconstcollisiondef(name, velocity, collision_offsets):
     collision_def = collision_def.withcase(ExpressionBuilder.true().build(), ExpressionBuilder.false().build())
     return collision_def
 
+'''
+def pgconstcollisiondef(name, velocity, collision_offsets):
+    collision_def = CaseDefinitionBuilder(name)
+    ox_exp = ExpressionBuilder("opponent.x - x").withparen()
+    oy_exp = ExpressionBuilder("opponent.y - y").withparen()
+    ndir_exp = ExpressionBuilder("direction").withnext()
+    nvel_exp = ExpressionBuilder("pushed_velocity").withnext().witheq(ExpressionBuilder(velocity))
+    ox_restr_exp = ox_exp.withge(ExpressionBuilder(-54)).withand(ox_exp.withle(ExpressionBuilder(54)))
+    oy_restr_exp = oy_exp.withge(ExpressionBuilder(-54)).withand(oy_exp.withle(ExpressionBuilder(54)))
+
+    xx_exp = ox_exp.withmul(ox_exp)
+    yy_exp = oy_exp.withmul(oy_exp)
+    xy_exp = ox_exp.withmul(oy_exp)
+    yycoef_exp = yy_exp.withmul(ExpressionBuilder(28125)).withparen().withdiv(ExpressionBuilder(100000))
+    atan_top = ExpressionBuilder(18000).withmul(xy_exp).withparen()
+    atan_bottom = ExpressionBuilder(314).withmul(xx_exp.withadd(yycoef_exp)).withparen()
+    atan_exp = atan_top.withdiv(atan_bottom).withparen()
+
+    # x = 0 and y > 0
+    temp_exp = ox_exp.witheq(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withgt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(ndir_exp.witheq(ExpressionBuilder(90)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x = 0 and y < 0
+    temp_exp = ox_exp.witheq(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withlt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(ndir_exp.witheq(ExpressionBuilder(270)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x > 0 and y >= 0 y <= x 1-oct
+    temp_exp = ox_exp.withgt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withge(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(oy_exp.withle(ox_exp))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(atan_exp))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x > 0 and y > x 2 or 3 oct
+    temp_exp = oy_exp.withgt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withgt(ox_exp))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(ExpressionBuilder(90).withsub(atan_exp)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x < 0 and y > -x
+    temp_exp = ox_exp.withlt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withadd(ox_exp).withgt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(ExpressionBuilder(90).withsub(atan_exp)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x < 0 and y >= 0 and y <= -x
+    temp_exp = ox_exp.withlt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withge(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(oy_exp.withadd(ox_exp).withle(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(ExpressionBuilder(180).withadd(atan_exp)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x < 0 and y < 0 and y >= x
+    temp_exp = ox_exp.withlt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withlt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(oy_exp.withge(ox_exp))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(ExpressionBuilder(180).withadd(atan_exp)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x < 0 and y < 0 and y < x
+    temp_exp = ox_exp.withlt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withlt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(oy_exp.withlt(ox_exp))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(ExpressionBuilder(270).withsub(atan_exp)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x > 0 and y < 0 and y + x < 0
+    temp_exp = ox_exp.withlt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withlt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(oy_exp.withadd(ox_exp).withlt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(ExpressionBuilder(270).withsub(atan_exp)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    # x > 0 and y < 0 and y + x >= 0
+    temp_exp = ox_exp.withlt(ExpressionBuilder(0))
+    temp_exp = temp_exp.withand(oy_exp.withlt(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withand(oy_exp.withadd(ox_exp).withge(ExpressionBuilder(0)))
+    temp_exp = temp_exp.withnewline().withand(ndir_exp.witheq(ExpressionBuilder(359).withadd(atan_exp)))
+    collision_def = collision_def.withcase(temp_exp.build(), ExpressionBuilder.true().build())
+
+    append = lambda exp1, exp2: exp1.withand(exp2)
+    collision_def = collision_def.withexpappended(nvel_exp, append)
+    collision_def = collision_def.withexpappended(ox_restr_exp, append)
+    collision_def = collision_def.withexpappended(oy_restr_exp, append)
+
+    collision_def = collision_def.withcase(ExpressionBuilder.true().build(), ExpressionBuilder.false().build())
+
+    return collision_def'''
 
 def pgsbinitdef(penguinspec):
     casedef = CaseDefinitionBuilder("SnowballInit")
@@ -193,12 +284,16 @@ def deadptsdef(combinedpts, name):
     return casedef
 
 
-def coldetecteddf(name, offsets):
+def coldetecteddf(name, path, offsets):
     casedef = CaseDefinitionBuilder(name)
-    xexp = ExpressionBuilder("x")
-    yexp = ExpressionBuilder("y")
-    nexpx = xexp.withnext().withsub(xexp).withparen()
-    nexpy = yexp.withnext().withsub(yexp).withparen()
+    xexp = ExpressionBuilder("x").withnext()
+    yexp = ExpressionBuilder("y").withnext()
+
+    pxexp = ExpressionBuilder(path + ".x").withnext()
+    pyexp = ExpressionBuilder(path + ".y").withnext()
+
+    nexpx = pxexp.withsub(xexp).withparen()
+    nexpy = pyexp.withsub(yexp).withparen()
 
     for x, yList in offsets.items():
         base = 0
@@ -258,9 +353,9 @@ def moveexp(points, name):
     for i in range(1, len(points) + 1):
         if i == len(points) or points[i][0] != points[direction][0] or points[i][1] != points[direction][1]:
             if (i - direction) > 1:
-                expression = direxp.within(ExpressionBuilder(direction, i-1))
+                expression = direxp.withnext().within(ExpressionBuilder(direction, i-1))
             else:
-                expression = direxp.witheq(ExpressionBuilder(direction))
+                expression = direxp.withnext().witheq(ExpressionBuilder(direction))
 
             expression = expression.withand(nextxexp.witheq(ExpressionBuilder(points[direction][0])))
             expression = expression.withand(nextyexp.witheq(ExpressionBuilder(points[direction][1])))
@@ -315,13 +410,15 @@ def combinepoints(points):
     return pointsdic
 
 
-def collisionoffsets(srcrad, destrad):
+def collisionoffsets(srcrad, srcvel, destrad, destvel):
     colradius = srcrad + destrad
+    veloffset = srcvel + destvel
+    smallradius = colradius - veloffset
 
     offsets = {}
     for x in range(-colradius, colradius + 1):
         for y in range(-colradius, colradius + 1):
-            if x * x + y * y <= colradius * colradius:
+            if (x * x + y * y >= smallradius*smallradius) and (x * x + y * y <= colradius * colradius):
                 if x not in offsets:
                     offsets[x] = []
                 offsets[x].append(y)

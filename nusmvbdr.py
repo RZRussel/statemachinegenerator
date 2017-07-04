@@ -65,6 +65,9 @@ class ExpressionBuilder:
     def withmul(self, other):
         return ExpressionBuilder(self.build() + " * " + other.build())
 
+    def withdiv(self, other):
+        return ExpressionBuilder(self.build() + " / " + other.build())
+
 
 class BaseDefinitionBuilder:
     def __init__(self, name, content=None):
