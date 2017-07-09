@@ -51,3 +51,47 @@ class TestExpressionBuilder(unittest.TestCase):
         builder.append_ge(Identifier("b"))
 
         assert builder.build() == "((a = b) < c > d) <= a >= b"
+
+    def test_next(self):
+        builder = ExpressionBuilder(Identifier("a"))
+        builder.append_add(Identifier("b"))
+        builder.wrap_next()
+
+        assert builder.build() == "next(a + b)"
+
+    def test_multiline_expression(self):
+        builder = ExpressionBuilder(Identifier("x"))
+        builder.append_imply(Identifier("y"))
+        builder.append_newline()
+        builder.append_or(Identifier("z"))
+
+        assert builder.build() == "x -> y\n | z"
+
+
+class TestCaseBuilder(unittest.TestCase):
+    def test_with_in_condition(self):
+        case_builder = CaseBuilder()
+
+        expression_builder = ExpressionBuilder(Identifier("x"))
+        expression_builder.append_in(Range(0, 10))
+
+        case_builder.add_case(expression_builder.expression, Integer(10))
+        case_builder.add_case(Bool.true(), Bool.false())
+
+        assert "case\n  x in 0..10 : 10;\n  TRUE : FALSE;\nesac;"
+
+    def test_and_append(self):
+        case_builder = CaseBuilder()
+
+        expression_builder = ExpressionBuilder(Identifier("x"))
+        expression_builder.append_in(Range(0, 10))
+
+        case_builder.add_case(expression_builder.expression, Integer(10))
+
+        expression_builder = ExpressionBuilder(Identifier("y"))
+        expression_builder.append_gt(Integer(0))
+
+        case_builder.add_case(expression_builder.expression, Integer(0))
+        case_builder.and_with_cases(BinaryOperation(">", Identifier("z"), Integer(0)))
+
+        assert "case\n  z > 0 & x in 0..10 : 10;\n  z > 0 & y > 0 : 0;\nesac;"

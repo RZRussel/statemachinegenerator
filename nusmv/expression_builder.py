@@ -56,5 +56,34 @@ class ExpressionBuilder:
     def append_in(self, expression):
         self.expression = BinaryOperation("in", self.expression, expression)
 
+    def append_newline(self):
+        self.expression = Newline(self.expression)
+
     def build(self):
         return str(self.expression)
+
+
+class CaseBuilder:
+    class Case:
+        def __init__(self, condition, value):
+            self.condition = condition
+            self.value = value
+
+        def __str__(self):
+            return str(self.condition) + " : " + str(self.value)
+
+    def __init__(self):
+        self.cases = []
+
+    def add_case(self, condition, value):
+        self.cases.append(self.Case(condition, value))
+
+    def and_with_cases(self, expression):
+        self.cases = list(map(lambda case: self.__append_binary_operation("&", expression, case), self.cases))
+
+    def build(self):
+        flatten_cases_str = "  ;\n".join(list(map(lambda case: str(case), self.cases)))
+        return "case\n  " + flatten_cases_str + "\nesac;"
+
+    def __append_binary_operation(self, symbol, expression, case):
+        return self.Case(BinaryOperation(symbol, case.condition, expression), case.value)
