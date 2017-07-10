@@ -8,6 +8,14 @@ class Range:
         self.left = left
         self.right = right
 
+    @staticmethod
+    def from_range(init_range):
+        if type(init_range) != range:
+            raise TypeError("Range type expected as parameter")
+
+        range_list = list(init_range)
+        return Range(range_list[0], range_list[-1])
+
     def __str__(self):
         return str(self.left) + ".." + str(self.right)
 

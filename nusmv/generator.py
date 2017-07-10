@@ -1,5 +1,7 @@
 from nusmv.expression_builder import *
 from nusmv.specification import *
+from generatortools import *
+from physics import *
 
 
 class SnowballGenerator:
@@ -7,7 +9,8 @@ class SnowballGenerator:
         self.specification = specification
 
     def flew(self):
-        pass
+        fly_offsets = radial_moves(self.specification.snowball.fly_velocity)
+        compacted_points = compact_2d_points(fly_offsets)
 
     def collision_detected(self):
         pass

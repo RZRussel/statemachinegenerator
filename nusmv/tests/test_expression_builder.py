@@ -7,14 +7,14 @@ from base_expression import *
 
 class TestExpressionBuilder(unittest.TestCase):
     def test_ariphmetic_expression(self):
-        self.builder = ExpressionBuilder(Identifier("a"))
-        self.builder.append_add(Identifier("b"))
-        self.builder.append_subtract(Identifier("c"))
-        self.builder.wrap_paranthesis()
-        self.builder.append_multiply(Integer(77))
-        self.builder.append_divide(Identifier("d"))
+        builder = ExpressionBuilder(Identifier("a"))
+        builder.append_add(Identifier("b"))
+        builder.append_subtract(Identifier("c"))
+        builder.wrap_paranthesis()
+        builder.append_multiply(Integer(77))
+        builder.append_divide(Identifier("d"))
 
-        assert self.builder.build() == "(a + b - c) * 77 / d"
+        assert builder.build() == "(a + b - c) * 77 / d"
 
     def test_logic_expression_with_deep_copy(self):
         builder = ExpressionBuilder(Bool.true())
@@ -78,7 +78,7 @@ class TestCaseBuilder(unittest.TestCase):
         case_builder.add_case(expression_builder.expression, Integer(10))
         case_builder.add_case(Bool.true(), Bool.false())
 
-        assert "case\n  x in 0..10 : 10;\n  TRUE : FALSE;\nesac;"
+        assert case_builder.build() == "case\n  x in 0..10 : 10;\n  TRUE : FALSE;\nesac;"
 
     def test_and_append(self):
         case_builder = CaseBuilder()
@@ -94,4 +94,26 @@ class TestCaseBuilder(unittest.TestCase):
         case_builder.add_case(expression_builder.expression, Integer(0))
         case_builder.and_with_cases(BinaryOperation(">", Identifier("z"), Integer(0)))
 
-        assert "case\n  z > 0 & x in 0..10 : 10;\n  z > 0 & y > 0 : 0;\nesac;"
+        assert case_builder.build() == "case\n  z > 0 & x in 0..10 : 10;\n  z > 0 & y > 0 : 0;\nesac;"
+
+    def test_merge(self):
+        case_builder = CaseBuilder()
+
+        expression_builder = ExpressionBuilder(Identifier("x"))
+        expression_builder.append_in(Range(0, 10))
+
+        case_builder.add_case(expression_builder.expression, Integer(10))
+
+        expression_builder = ExpressionBuilder(Identifier("y"))
+        expression_builder.append_gt(Integer(0))
+
+        second_case_builder = CaseBuilder()
+        second_case_builder.add_case(expression_builder.expression, Integer(0))
+
+        case_builder.merge(second_case_builder)
+
+        assert case_builder.build() == "case\n  x in 0..10 : 10;\n  y > 0 : 0;\nesac;"
+
+    def test_empty(self):
+        case_builder = CaseBuilder()
+        assert case_builder.build() == "case\n\nesac;"

@@ -81,9 +81,14 @@ class CaseBuilder:
     def and_with_cases(self, expression):
         self.cases = list(map(lambda case: self.__append_binary_operation("&", expression, case), self.cases))
 
+    def merge(self, other):
+        self.cases = self.cases + other.cases
+
     def build(self):
-        flatten_cases_str = "  ;\n".join(list(map(lambda case: str(case), self.cases)))
-        return "case\n  " + flatten_cases_str + "\nesac;"
+        flatten_cases = list(map(lambda case: str(case), self.cases))
+        flatten_cases = list(map(lambda s: "  " + s + ";", flatten_cases))
+        flatten_cases_str = "\n".join(flatten_cases)
+        return "case\n" + flatten_cases_str + "\nesac;"
 
     def __append_binary_operation(self, symbol, expression, case):
-        return self.Case(BinaryOperation(symbol, case.condition, expression), case.value)
+        return self.Case(BinaryOperation(symbol, expression, case.condition), case.value)
