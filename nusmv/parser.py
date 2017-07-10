@@ -1,5 +1,6 @@
+import yaml
 from nusmv.model import *
-
+from nusmv.specification import *
 
 class ParsingError(Exception):
     """Exception class to throw if error occures during parsing"""
@@ -109,9 +110,25 @@ def parse_specification_from_file(filename):
     :return: Specification object
     """
     with open(filename) as file:
-        code = file.read()
-    return parse_specification_from_string(code)
+        yaml_string = file.read()
+    return parse_specification_from_string(yaml_string)
 
 
-def parse_specification_from_string(code):
-    pass
+def parse_specification_from_string(yaml_string):
+    """
+    Parses yaml game specification. Algorithm uses explicit key references to
+    prevent from malicious data injection.
+    :param yaml_string: Game specification string in yaml format
+    :return: Specification object
+    """
+    mappings = yaml.load(yaml_string)
+    world_mappings = mappings["specification"]["world"]
+    island_mappings = mappings["specification"]["island"]
+    penguin_mappings = mappings["specification"]["penguin"]
+    snowball_mappings = mappings["specification"]["snowball"]
+
+    if "insertions" in mappings["specification"]:
+        insertions_mappings = mappings["specification"]["insertions"]
+        return Specification(world_mappings, island_mappings, penguin_mappings, snowball_mappings, insertions_mappings)
+    else:
+        return Specification(world_mappings, island_mappings, penguin_mappings, snowball_mappings)
