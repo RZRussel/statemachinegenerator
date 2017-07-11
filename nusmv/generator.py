@@ -208,7 +208,39 @@ class PenguinGenerator:
         return builder.build()
 
     def flashed(self):
-        pass
+        move_offsets = radial_moves(self.specification.penguin.flash_velocity)
+        compacted_list = compact_list_by_index(move_offsets)
+
+        case_builder = CaseBuilder()
+
+        for point, direction in compacted_list:
+            x_expr = ExpressionBuilder(Identifier(K_PENGUIN_X))
+            x_expr.wrap_next()
+            x_expr.append_subtract(Identifier(K_PENGUIN_X))
+            x_expr.wrap_paranthesis()
+            x_expr.append_eq(Integer(point[0]))
+
+            y_expr = ExpressionBuilder(Identifier(K_PENGUIN_Y))
+            y_expr.wrap_next()
+            y_expr.append_subtract(Identifier(K_PENGUIN_Y))
+            y_expr.wrap_paranthesis()
+            y_expr.append_eq(Integer(point[1]))
+
+            d_expr = ExpressionBuilder(Identifier(K_PENGUIN_DIRECTION))
+
+            if type(direction) == range:
+                d_expr.append_in(Range.from_range(direction))
+            else:
+                d_expr.append_eq(Integer(direction))
+
+            d_expr.append_and(x_expr.expression)
+            d_expr.append_and(y_expr.expression)
+
+            case_builder.add_case(d_expr.expression, Bool.true())
+
+        case_builder.add_case(Bool.true(), Bool.false())
+
+        return case_builder.build()
 
     def pushed(self):
         pass

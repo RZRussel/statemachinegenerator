@@ -124,6 +124,25 @@ esac;"""
   TRUE : FALSE;
 esac;"""
 
+    def test_flashed(self):
+        penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
+                            K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
+        penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
+                                                           STUB_SNOWBALL_MAPPINGS))
+
+        assert penguin_generator.flashed() == """case
+  direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  direction in 31..60 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;
+  direction in 61..120 & (next(x) - x) = 0 & (next(y) - y) = 1 : TRUE;
+  direction in 121..149 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;
+  direction in 150..209 & (next(x) - x) = -1 & (next(y) - y) = 0 : TRUE;
+  direction in 210..240 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;
+  direction in 241..300 & (next(x) - x) = 0 & (next(y) - y) = -1 : TRUE;
+  direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
+  direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  TRUE : FALSE;
+esac;"""
+
     def test_collision_detected(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
                             K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
