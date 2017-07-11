@@ -42,6 +42,28 @@ def rotate_position(position):
     return positions
 
 
+def collision_offsets_for_circle_bodies(src_radius, src_velocity, dst_radius, dst_velocity):
+    """
+    Creates set of possible position offsets between two circle bodies when collision must be detected.
+    :param src_radius: int radius of the first body
+    :param src_velocity: int velocity of the first body
+    :param dst_radius: int radius of the second body
+    :param dst_velocity: int velocity of the second body
+    :return: Set of (x, y) tuples
+    """
+
+    max_distance = src_radius + dst_radius
+    min_distance = max_distance - (src_velocity + dst_velocity)
+
+    offsets = set()
+    for x in range(-max_distance, max_distance + 1):
+        for y in range(-max_distance, max_distance + 1):
+            if (x * x + y * y >= min_distance * min_distance) and (x * x + y * y <= max_distance * max_distance):
+                offsets.add((x, y))
+
+    return offsets
+
+
 def reachable_points_from_ellipsis(center, a, b, velocity):
     """
     Creates a set of reachable points outside of the ellipsis from any which lies inside in one step.

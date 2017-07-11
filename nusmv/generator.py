@@ -11,6 +11,9 @@ K_SNOWBALL_X = "x"
 K_SNOWBALL_Y = "y"
 K_SNOWBALL_DIRECTION = "direction"
 
+K_SNOWBALL_OTHER_PENGUIN = "owner.opponent"
+K_PENGUIN_OTHER_PENGUIN = "opponent"
+
 
 class SnowballGenerator:
     def __init__(self, specification):
@@ -52,7 +55,46 @@ class SnowballGenerator:
         return case_builder.build()
 
     def collision_detected(self):
-        pass
+        src_radius = self.specification.penguin.radius
+        src_velocity = self.specification.penguin.flash_velocity
+        dst_radius = self.specification.snowball.radius
+        dst_velocity = self.specification.snowball.fly_velocity
+
+        offsets = collision_offsets_for_circle_bodies(src_radius, src_velocity, dst_radius, dst_velocity)
+        compacted_offsets = compact_2d_points(offsets)
+
+        builder = CaseBuilder()
+
+        for x, y in compacted_offsets:
+            opponent_x_expr = ExpressionBuilder(Identifier(K_SNOWBALL_OTHER_PENGUIN+"."+K_PENGUIN_X))
+            opponent_x_expr.wrap_next()
+
+            x_expr = ExpressionBuilder(Identifier(K_SNOWBALL_X))
+            x_expr.wrap_next()
+            x_expr.append_subtract(opponent_x_expr.expression)
+            x_expr.wrap_paranthesis()
+            x_expr.append_eq(Integer(x))
+
+            opponent_y_expr = ExpressionBuilder(Identifier(K_SNOWBALL_OTHER_PENGUIN+"."+K_PENGUIN_Y))
+            opponent_y_expr.wrap_next()
+
+            y_expr = ExpressionBuilder(Identifier(K_SNOWBALL_Y))
+            y_expr.wrap_next()
+            y_expr.append_subtract(opponent_y_expr.expression)
+            y_expr.wrap_paranthesis()
+
+            if type(y) == range:
+                y_expr.append_in(Range.from_range(y))
+            else:
+                y_expr.append_eq(y)
+
+            x_expr.append_and(y_expr.expression)
+
+            builder.add_case(x_expr.expression, Bool.true())
+
+        builder.add_case(Bool.true(), Bool.false())
+
+        return builder.build()
 
     def dead_point_reached(self):
         center = (self.specification.island.center_x, self.specification.island.center_y)
@@ -145,7 +187,46 @@ class PenguinGenerator:
         pass
 
     def collision_detected(self):
-        pass
+        src_radius = self.specification.penguin.radius
+        src_velocity = self.specification.penguin.flash_velocity
+        dst_radius = self.specification.penguin.radius
+        dst_velocity = self.specification.penguin.flash_velocity
+
+        offsets = collision_offsets_for_circle_bodies(src_radius, src_velocity, dst_radius, dst_velocity)
+        compacted_offsets = compact_2d_points(offsets)
+
+        builder = CaseBuilder()
+
+        for x, y in compacted_offsets:
+            opponent_x_expr = ExpressionBuilder(Identifier(K_PENGUIN_OTHER_PENGUIN + "." + K_PENGUIN_X))
+            opponent_x_expr.wrap_next()
+
+            x_expr = ExpressionBuilder(Identifier(K_PENGUIN_X))
+            x_expr.wrap_next()
+            x_expr.append_subtract(opponent_x_expr.expression)
+            x_expr.wrap_paranthesis()
+            x_expr.append_eq(Integer(x))
+
+            opponent_y_expr = ExpressionBuilder(Identifier(K_PENGUIN_OTHER_PENGUIN + "." + K_PENGUIN_Y))
+            opponent_y_expr.wrap_next()
+
+            y_expr = ExpressionBuilder(Identifier(K_PENGUIN_Y))
+            y_expr.wrap_next()
+            y_expr.append_subtract(opponent_y_expr.expression)
+            y_expr.wrap_paranthesis()
+
+            if type(y) == range:
+                y_expr.append_in(Range.from_range(y))
+            else:
+                y_expr.append_eq(y)
+
+            x_expr.append_and(y_expr.expression)
+
+            builder.add_case(x_expr.expression, Bool.true())
+
+        builder.add_case(Bool.true(), Bool.false())
+
+        return builder.build()
 
     def dead_point_reached(self):
         center = (self.specification.island.center_x, self.specification.island.center_y)

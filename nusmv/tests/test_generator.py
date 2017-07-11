@@ -29,6 +29,30 @@ class TestSnowballGenerator(unittest.TestCase):
   TRUE : FALSE;
 esac;"""
 
+    def test_collision_detected(self):
+        snowball_mappings = {K_SNOWBALL_RADIUS: 2, K_SNOWBALL_FLY_VELOCITY: 1}
+        penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
+                            K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
+
+        snowball_generator = SnowballGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS,
+                                                             penguin_mappings, snowball_mappings))
+
+        assert snowball_generator.collision_detected() == """case
+  (next(x) - next(owner.opponent.x)) = -4 & (next(y) - next(owner.opponent.y)) = 0 : TRUE;
+  (next(x) - next(owner.opponent.x)) = -3 & (next(y) - next(owner.opponent.y)) in -2..2 : TRUE;
+  (next(x) - next(owner.opponent.x)) = -2 & (next(y) - next(owner.opponent.y)) in -3..3 : TRUE;
+  (next(x) - next(owner.opponent.x)) = -1 & (next(y) - next(owner.opponent.y)) in -3..-2 : TRUE;
+  (next(x) - next(owner.opponent.x)) = -1 & (next(y) - next(owner.opponent.y)) in 2..3 : TRUE;
+  (next(x) - next(owner.opponent.x)) = 0 & (next(y) - next(owner.opponent.y)) in -4..-2 : TRUE;
+  (next(x) - next(owner.opponent.x)) = 0 & (next(y) - next(owner.opponent.y)) in 2..4 : TRUE;
+  (next(x) - next(owner.opponent.x)) = 1 & (next(y) - next(owner.opponent.y)) in -3..-2 : TRUE;
+  (next(x) - next(owner.opponent.x)) = 1 & (next(y) - next(owner.opponent.y)) in 2..3 : TRUE;
+  (next(x) - next(owner.opponent.x)) = 2 & (next(y) - next(owner.opponent.y)) in -3..3 : TRUE;
+  (next(x) - next(owner.opponent.x)) = 3 & (next(y) - next(owner.opponent.y)) in -2..2 : TRUE;
+  (next(x) - next(owner.opponent.x)) = 4 & (next(y) - next(owner.opponent.y)) = 0 : TRUE;
+  TRUE : FALSE;
+esac;"""
+
     def test_dead_point_reached(self):
         snowball_mappings = {K_SNOWBALL_RADIUS: 10, K_SNOWBALL_FLY_VELOCITY: 1}
         island_mappings = {K_ISLAND_CENTER_X: 50, K_ISLAND_CENTER_Y: 50, K_ISLAND_SMALL_RADIUS: 2,
@@ -70,6 +94,28 @@ class TestPenguinGenerator(unittest.TestCase):
   next(direction) in 241..300 & (next(x) - x) = 0 & (next(y) - y) = -1 : TRUE;
   next(direction) in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
   next(direction) in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  TRUE : FALSE;
+esac;"""
+
+    def test_collision_detected(self):
+        penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
+                            K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
+        penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
+                                                           STUB_SNOWBALL_MAPPINGS))
+
+        assert penguin_generator.collision_detected() == """case
+  (next(x) - next(opponent.x)) = -4 & (next(y) - next(opponent.y)) = 0 : TRUE;
+  (next(x) - next(opponent.x)) = -3 & (next(y) - next(opponent.y)) in -2..2 : TRUE;
+  (next(x) - next(opponent.x)) = -2 & (next(y) - next(opponent.y)) in -3..3 : TRUE;
+  (next(x) - next(opponent.x)) = -1 & (next(y) - next(opponent.y)) in -3..-2 : TRUE;
+  (next(x) - next(opponent.x)) = -1 & (next(y) - next(opponent.y)) in 2..3 : TRUE;
+  (next(x) - next(opponent.x)) = 0 & (next(y) - next(opponent.y)) in -4..-2 : TRUE;
+  (next(x) - next(opponent.x)) = 0 & (next(y) - next(opponent.y)) in 2..4 : TRUE;
+  (next(x) - next(opponent.x)) = 1 & (next(y) - next(opponent.y)) in -3..-2 : TRUE;
+  (next(x) - next(opponent.x)) = 1 & (next(y) - next(opponent.y)) in 2..3 : TRUE;
+  (next(x) - next(opponent.x)) = 2 & (next(y) - next(opponent.y)) in -3..3 : TRUE;
+  (next(x) - next(opponent.x)) = 3 & (next(y) - next(opponent.y)) in -2..2 : TRUE;
+  (next(x) - next(opponent.x)) = 4 & (next(y) - next(opponent.y)) = 0 : TRUE;
   TRUE : FALSE;
 esac;"""
 

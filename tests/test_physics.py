@@ -43,3 +43,19 @@ class TestPhysics(unittest.TestCase):
                     has_step = True
                     break
             assert has_step
+
+    def test_collision_offsets(self):
+        src_radius = 10
+        src_velocity = 2
+        dst_radius = 5
+        dst_velocity = 1
+
+        offsets = collision_offsets_for_circle_bodies(src_radius, src_velocity, dst_radius, dst_velocity)
+
+        assert (src_radius + dst_radius, 0) in offsets
+        assert (0, src_radius + dst_radius) in offsets
+        assert (-(src_radius + dst_radius), 0) in offsets
+        assert (0, -(src_radius + dst_radius)) in offsets
+
+        for x, y in offsets:
+            assert x*x + y*y <= (src_radius + dst_radius)*(src_radius + dst_radius)
