@@ -222,6 +222,106 @@ esac;"""
   TRUE : 0;
 esac;"""
 
+    def test_static_collision_initialized(self):
+        penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
+                            K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
+        penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
+                                                           STUB_SNOWBALL_MAPPINGS))
+
+        assert penguin_generator.static_collision_initialized() == """case
+  (opponent.x - x) = 1 & (opponent.y - y) = 3 & next(direction) = 252 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 0 & next(direction) = 0 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = -2 & next(direction) = 34 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = -1 & next(direction) = 18 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = 0 & next(direction) = 180 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = -3 & next(direction) = 56 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = -3 & next(direction) = 72 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 1 & next(direction) = 207 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = 3 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 1 & (opponent.y - y) = -2 & next(direction) = 117 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 4 & (opponent.y - y) = 0 & next(direction) = 180 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 1 & (opponent.y - y) = 2 & next(direction) = 243 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 1 & next(direction) = 333 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = -3 & next(direction) = 124 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = 2 & next(direction) = 326 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = -2 & next(direction) = 45 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = -1 & next(direction) = 27 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = -2 & next(direction) = 63 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = 4 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 1 & (opponent.y - y) = -3 & next(direction) = 108 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 2 & next(direction) = 225 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = -4 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = 2 & next(direction) = 214 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 2 & next(direction) = 315 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = 2 & next(direction) = 297 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = -2 & next(direction) = 135 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = -1 & next(direction) = 153 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = 1 & next(direction) = 342 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 3 & next(direction) = 236 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -4 & (opponent.y - y) = 0 & next(direction) = 0 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = -3 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 3 & next(direction) = 304 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = 3 & next(direction) = 288 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = 1 & next(direction) = 198 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = 0 & next(direction) = 0 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = -2 & next(direction) = 146 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = -1 & next(direction) = 162 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 0 & next(direction) = 180 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = -2 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = 2 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
+  TRUE : FALSE;
+esac;"""
+
+    def test_flashing_collision(self):
+        penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 0, K_PENGUIN_FLASH_VELOCITY: 1,
+                            K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
+        penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
+                                                           STUB_SNOWBALL_MAPPINGS))
+
+        assert penguin_generator.flashing_collision_initialized() == """case
+  (opponent.x - x) = 1 & (opponent.y - y) = 3 & next(direction) = 252 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 0 & next(direction) = 0 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = -2 & next(direction) = 34 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = -1 & next(direction) = 18 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = 0 & next(direction) = 180 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = -3 & next(direction) = 56 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = -3 & next(direction) = 72 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 1 & next(direction) = 207 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = 3 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 1 & (opponent.y - y) = -2 & next(direction) = 117 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 4 & (opponent.y - y) = 0 & next(direction) = 180 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 1 & (opponent.y - y) = 2 & next(direction) = 243 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 1 & next(direction) = 333 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = -3 & next(direction) = 124 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = 2 & next(direction) = 326 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = -2 & next(direction) = 45 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = -1 & next(direction) = 27 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = -2 & next(direction) = 63 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = 4 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 1 & (opponent.y - y) = -3 & next(direction) = 108 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 2 & next(direction) = 225 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = -4 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = 2 & next(direction) = 214 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 2 & next(direction) = 315 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = 2 & next(direction) = 297 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = -2 & next(direction) = 135 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = -1 & next(direction) = 153 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = 1 & next(direction) = 342 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 3 & next(direction) = 236 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -4 & (opponent.y - y) = 0 & next(direction) = 0 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = -3 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -2 & (opponent.y - y) = 3 & next(direction) = 304 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -1 & (opponent.y - y) = 3 & next(direction) = 288 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = 1 & next(direction) = 198 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = -3 & (opponent.y - y) = 0 & next(direction) = 0 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = -2 & next(direction) = 146 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 3 & (opponent.y - y) = -1 & next(direction) = 162 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 2 & (opponent.y - y) = 0 & next(direction) = 180 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = -2 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
+  (opponent.x - x) = 0 & (opponent.y - y) = 2 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
+  TRUE : FALSE;
+esac;"""
+
     def test_dead_point_reached(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 2,
                             K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}

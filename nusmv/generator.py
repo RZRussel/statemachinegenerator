@@ -319,10 +319,10 @@ class PenguinGenerator:
         return builder.build()
 
     def static_collision_initialized(self):
-        pass
+        return self.___collision_initialized(self.specification.penguin.move_velocity)
 
     def flashing_collision_initialized(self):
-        pass
+        return self.___collision_initialized(self.specification.penguin.flash_velocity)
 
     def collision_detected(self):
         src_radius = self.specification.penguin.radius
@@ -392,6 +392,45 @@ class PenguinGenerator:
 
             x_expr.append_and(y_expr.expression)
             builder.add_case(x_expr.expression, Bool.true())
+
+        builder.add_case(Bool.true(), Bool.false())
+
+        return builder.build()
+
+    def ___collision_initialized(self, velocity):
+        collision_offsets = collision_offsets_for_circle_bodies(self.specification.penguin.radius,
+                                                                velocity,
+                                                                self.specification.penguin.radius,
+                                                                velocity)
+        builder = CaseBuilder()
+
+        v_expr = ExpressionBuilder(Identifier(K_PENGUIN_PUSHED_VELOCITY))
+        v_expr.wrap_next()
+        v_expr.append_eq(Integer(velocity))
+
+        for x, y in collision_offsets:
+            x_expr = ExpressionBuilder(Identifier(K_PENGUIN_OTHER_PENGUIN + "." + K_PENGUIN_X))
+            x_expr.append_subtract(Identifier(K_PENGUIN_X))
+            x_expr.wrap_paranthesis()
+            x_expr.append_eq(Integer(x))
+
+            y_expr = ExpressionBuilder(Identifier(K_PENGUIN_OTHER_PENGUIN + "." + K_PENGUIN_Y))
+            y_expr.append_subtract(Identifier(K_PENGUIN_Y))
+            y_expr.wrap_paranthesis()
+            y_expr.append_eq(Integer(y))
+
+            next_direction = reversed_direction((x, y))
+
+            d_expr = ExpressionBuilder(Identifier(K_PENGUIN_DIRECTION))
+            d_expr.wrap_next()
+            d_expr.append_eq(Integer(next_direction))
+
+            case_expr = ExpressionBuilder(x_expr.expression)
+            case_expr.append_and(y_expr.expression)
+            case_expr.append_and(d_expr.expression)
+            case_expr.append_and(v_expr.expression)
+
+            builder.add_case(case_expr.expression, Bool.true())
 
         builder.add_case(Bool.true(), Bool.false())
 

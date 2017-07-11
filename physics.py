@@ -141,6 +141,36 @@ def ellipsis_contains_position(center, a, b, position):
     d2 = sqrt((rf[0] - position[0]) * (rf[0] - position[0]) + (rf[1] - position[1]) * (rf[1] - position[1]))
     return d1 + d2 <= 2 * b
 
+
+def reversed_direction(vector):
+    """
+    Calculates angle for the direction which is opposite to provided one
+    :param vector: (x, y) vector which determines direction
+    :return: int value in range 0..359
+
+    For example:
+    >>> reversed_direction((1, 1))
+    225
+    >>> reversed_direction((-1, 1))
+    315
+    >>> reversed_direction((0, -1))
+    90
+    """
+
+    if vector[0] == 0:
+        if vector[1] > 0:
+            return 270
+        else:
+            return 90
+    elif vector[0] > 0 and vector[1] >= 0:
+        return 180 + round(atan(vector[1] / vector[0]) * 180 / pi)
+    elif vector[0] > 0 and vector[1] < 0:
+        return 180 - round(atan(-vector[1] / vector[0]) * 180 / pi)
+    elif vector[0] < 0 and vector[1] > 0:
+        return (360 - round(atan(vector[1] / -vector[0]) * 180 / pi)) % 360
+    elif vector[0] < 0 and vector[1] <= 0:
+        return round(atan(-vector[1] / -vector[0]) * 180 / pi)
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
