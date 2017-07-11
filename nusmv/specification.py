@@ -72,14 +72,31 @@ class Snowball:
         self.radius = radius
         self.fly_velocity = fly_velocity
 
+K_WORLD_MAX_X = "max_x"
+K_WORLD_MAX_Y = "max_y"
+
+K_ISLAND_CENTER_X = "center_x"
+K_ISLAND_CENTER_Y = "center_y"
+K_ISLAND_SMALL_RADIUS = "small_radius"
+K_ISLAND_BIG_RADIUS = "big_radius"
+
+K_PENGUIN_RADIUS = "radius"
+K_PENGUIN_MOVE_VELOCITY = "move_velocity"
+K_PENGUIN_FLASH_VELOCITY = "flash_velocity"
+K_PENGUIN_SLIDING_FRICTION = "sliding_friction"
+K_PENGUIN_SNOWBALL_OX = "snowball_ox"
+K_PENGUIN_SNOWBALL_OY = "snowball_oy"
+
+K_SNOWBALL_RADIUS = "radius"
+K_SNOWBALL_FLY_VELOCITY = "fly_velocity"
 
 class Specification:
     def __init__(self, world_mappings, island_mappings, penguin_mappings, snowball_mappings, insertions_mappings=None):
-        self.world = World(world_mappings["max_x"], world_mappings["max_y"])
-        self.island = Island(island_mappings["center_x"], island_mappings["center_y"], island_mappings["small_radius"],
-                             island_mappings["big_radius"])
-        self.penguin = Penguin(penguin_mappings["radius"], penguin_mappings["move_velocity"],
-                               penguin_mappings["flash_velocity"], penguin_mappings["sliding_friction"],
-                               penguin_mappings["snowball_ox"], penguin_mappings["snowball_oy"])
-        self.snowball = Snowball(snowball_mappings["radius"], snowball_mappings["fly_velocity"])
+        self.world = World(world_mappings[K_WORLD_MAX_X], world_mappings[K_WORLD_MAX_Y])
+        self.island = Island(island_mappings[K_ISLAND_CENTER_X], island_mappings[K_ISLAND_CENTER_Y],
+                             island_mappings[K_ISLAND_SMALL_RADIUS], island_mappings[K_ISLAND_BIG_RADIUS])
+        self.penguin = Penguin(penguin_mappings[K_PENGUIN_RADIUS], penguin_mappings[K_PENGUIN_MOVE_VELOCITY],
+                               penguin_mappings[K_PENGUIN_FLASH_VELOCITY], penguin_mappings[K_PENGUIN_SLIDING_FRICTION],
+                               penguin_mappings[K_PENGUIN_SNOWBALL_OX], penguin_mappings[K_PENGUIN_SNOWBALL_OY])
+        self.snowball = Snowball(snowball_mappings[K_SNOWBALL_RADIUS], snowball_mappings[K_SNOWBALL_FLY_VELOCITY])
         self.insertions = insertions_mappings or {}

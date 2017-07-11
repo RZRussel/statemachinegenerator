@@ -84,6 +84,7 @@ class Paranthesis:
     def __str__(self):
         return '('+str(self.expression)+')'
 
+
 class Newline:
     def __init__(self, expression):
         self.expression = expression
