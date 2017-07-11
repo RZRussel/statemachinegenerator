@@ -3,6 +3,7 @@ from nusmv.expression import *
 from generatortools import *
 from physics import *
 
+
 K_PENGUIN_X = "x"
 K_PENGUIN_Y = "y"
 K_PENGUIN_DIRECTION = "direction"
@@ -300,7 +301,22 @@ class PenguinGenerator:
         return builder.build()
 
     def pushed_initial_index(self):
-        pass
+        possible_velocities = [self.specification.penguin.move_velocity, self.specification.penguin.flash_velocity]
+
+        builder = CaseBuilder()
+
+        for v in possible_velocities:
+            fading_velocities = fading_velocities_list(self.specification.penguin.sliding_friction, v)
+
+            v_expr = ExpressionBuilder(Identifier(K_PENGUIN_PUSHED_VELOCITY))
+            v_expr.wrap_next()
+            v_expr.append_eq(Integer(v))
+
+            builder.add_case(v_expr.expression, Integer(len(fading_velocities)))
+
+        builder.add_case(Bool.true(), 0)
+
+        return builder.build()
 
     def static_collision_initialized(self):
         pass
