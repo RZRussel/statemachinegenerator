@@ -97,6 +97,33 @@ class TestPenguinGenerator(unittest.TestCase):
   TRUE : FALSE;
 esac;"""
 
+    def test_snowball_initialized(self):
+        penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
+                            K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 1, K_PENGUIN_SNOWBALL_OY: 2}
+        penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
+                                                           STUB_SNOWBALL_MAPPINGS))
+
+        penguin_generator.snowball_initialized() == """case
+  next(snowball.direction) in 0..13 & (next(snowball.x) - x) = 1 & (next(snowball.y) - y) = 2 : TRUE;
+  next(snowball.direction) in 14..39 & (next(snowball.x) - x) = 0 & (next(snowball.y) - y) = 2 : TRUE;
+  next(snowball.direction) in 40..68 & (next(snowball.x) - x) = -1 & (next(snowball.y) - y) = 2 : TRUE;
+  next(snowball.direction) in 69..74 & (next(snowball.x) - x) = -2 & (next(snowball.y) - y) = 2 : TRUE;
+  next(snowball.direction) in 75..103 & (next(snowball.x) - x) = -2 & (next(snowball.y) - y) = 1 : TRUE;
+  next(snowball.direction) in 104..129 & (next(snowball.x) - x) = -2 & (next(snowball.y) - y) = 0 : TRUE;
+  next(snowball.direction) in 130..158 & (next(snowball.x) - x) = -2 & (next(snowball.y) - y) = -1 : TRUE;
+  next(snowball.direction) in 159..164 & (next(snowball.x) - x) = -2 & (next(snowball.y) - y) = -2 : TRUE;
+  next(snowball.direction) in 165..193 & (next(snowball.x) - x) = -1 & (next(snowball.y) - y) = -2 : TRUE;
+  next(snowball.direction) in 194..219 & (next(snowball.x) - x) = 0 & (next(snowball.y) - y) = -2 : TRUE;
+  next(snowball.direction) in 220..248 & (next(snowball.x) - x) = 1 & (next(snowball.y) - y) = -2 : TRUE;
+  next(snowball.direction) in 249..254 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = -2 : TRUE;
+  next(snowball.direction) in 255..283 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = -1 : TRUE;
+  next(snowball.direction) in 284..309 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = 0 : TRUE;
+  next(snowball.direction) in 310..338 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = 1 : TRUE;
+  next(snowball.direction) in 339..344 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = 2 : TRUE;
+  next(snowball.direction) in 345..359 & (next(snowball.x) - x) = 1 & (next(snowball.y) - y) = 2 : TRUE;
+  TRUE : FALSE;
+esac;"""
+
     def test_collision_detected(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
                             K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}

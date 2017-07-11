@@ -6,6 +6,7 @@ from physics import *
 K_PENGUIN_X = "x"
 K_PENGUIN_Y = "y"
 K_PENGUIN_DIRECTION = "direction"
+K_PENGUIN_SNOWBALL = "snowball"
 
 K_SNOWBALL_X = "x"
 K_SNOWBALL_Y = "y"
@@ -169,7 +170,42 @@ class PenguinGenerator:
         return case_builder.build()
 
     def snowball_initialized(self):
-        pass
+        snowball_offsets = rotate_position((self.specification.penguin.snowball_ox,
+                                            self.specification.penguin.snowball_oy))
+
+        compacted_offsets = compact_list_by_index(snowball_offsets)
+
+        builder = CaseBuilder()
+
+        for offset, direction in compacted_offsets:
+            x_expr = ExpressionBuilder(Identifier(K_PENGUIN_SNOWBALL + "." + K_SNOWBALL_X))
+            x_expr.wrap_next()
+            x_expr.append_subtract(Identifier(K_PENGUIN_X))
+            x_expr.wrap_paranthesis()
+            x_expr.append_eq(offset[0])
+
+            y_expr = ExpressionBuilder(Identifier(K_PENGUIN_SNOWBALL + "." + K_SNOWBALL_Y))
+            y_expr.wrap_next()
+            y_expr.append_subtract(Identifier(K_PENGUIN_Y))
+            y_expr.wrap_paranthesis()
+            y_expr.append_eq(offset[1])
+
+            direction_expr = ExpressionBuilder(Identifier(K_PENGUIN_SNOWBALL + "." + K_SNOWBALL_DIRECTION))
+            direction_expr.wrap_next()
+
+            if type(direction) == range:
+                direction_expr.append_in(Range.from_range(direction))
+            else:
+                direction_expr.append_eq(direction)
+
+            direction_expr.append_and(x_expr.expression)
+            direction_expr.append_and(y_expr.expression)
+
+            builder.add_case(direction_expr.expression, Bool.true())
+
+        builder.add_case(Bool.true(), Bool.false())
+
+        return builder.build()
 
     def flashed(self):
         pass
