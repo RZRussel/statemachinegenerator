@@ -42,6 +42,25 @@ def rotate_position(position):
     return positions
 
 
+def fading_velocities_list(friction, initial_velocity):
+    """
+    Calculates future velocities until stop for movement with friction. The list is
+    nonincreasing.
+    :param friction: float value
+    :param initial_velocity: int value
+    :return: List of int values
+    """
+
+    velocities = [initial_velocity]
+
+    t = 1
+    while velocities[-1] > 0:
+        velocities.append(round(initial_velocity*exp(-t*friction)))
+        t = t + 1
+
+    return list(reversed(velocities))
+
+
 def collision_offsets_for_circle_bodies(src_radius, src_velocity, dst_radius, dst_velocity):
     """
     Creates set of possible position offsets between two circle bodies when collision must be detected.

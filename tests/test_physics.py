@@ -17,6 +17,20 @@ class TestPhysics(unittest.TestCase):
         assert (0, 1) in positions
         assert (1, 0) in positions
 
+    def test_fading_velocities_list_property(self):
+        velocities = fading_velocities_list(1.0, 1000)
+
+        assert len(velocities) >= 2
+
+        for i in range(0, len(velocities) - 1):
+            assert velocities[i+1] >= velocities[i]
+
+    def test_fading_velocity_sequence(self):
+        velocities = fading_velocities_list(1.0, 10)
+
+        print(velocities)
+        assert velocities == [0, 1, 4, 10]
+
     def test_rotate_positions_vs_radial_moves(self):
         moves = set(radial_moves(5))
         rotations = set(rotate_position((0, 5)))
