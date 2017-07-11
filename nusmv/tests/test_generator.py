@@ -103,7 +103,7 @@ esac;"""
         penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
                                                            STUB_SNOWBALL_MAPPINGS))
 
-        penguin_generator.snowball_initialized() == """case
+        assert penguin_generator.snowball_initialized() == """case
   next(snowball.direction) in 0..13 & (next(snowball.x) - x) = 1 & (next(snowball.y) - y) = 2 : TRUE;
   next(snowball.direction) in 14..39 & (next(snowball.x) - x) = 0 & (next(snowball.y) - y) = 2 : TRUE;
   next(snowball.direction) in 40..68 & (next(snowball.x) - x) = -1 & (next(snowball.y) - y) = 2 : TRUE;
