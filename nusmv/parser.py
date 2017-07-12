@@ -1,3 +1,4 @@
+import yaml
 from nusmv.model import *
 from nusmv.specification import *
 import string

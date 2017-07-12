@@ -118,6 +118,9 @@ class TestSpecificationParser(unittest.TestCase):
         assert specification.penguin.snowball_oy == 15
         assert specification.snowball.radius == 10
         assert specification.snowball.fly_velocity == 10
+        assert "snowball_timer_max" in specification.insertions
+        assert "pushing_index_max" in specification.insertions
+        assert "moved" not in specification.insertions
         assert specification.insertions["snowball_timer_max"] == 60
         assert specification.insertions["pushing_index_max"] == 15
 

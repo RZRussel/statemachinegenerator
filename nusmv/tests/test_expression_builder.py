@@ -78,7 +78,7 @@ class TestCaseBuilder(unittest.TestCase):
         case_builder.add_case(expression_builder.expression, Integer(10))
         case_builder.add_case(Bool.true(), Bool.false())
 
-        assert case_builder.build() == "case\n  x in 0..10 : 10;\n  TRUE : FALSE;\nesac;"
+        assert case_builder.build() == "case\n  x in 0..10 : 10;\n  TRUE : FALSE;\nesac"
 
     def test_and_append(self):
         case_builder = CaseBuilder()
@@ -94,7 +94,7 @@ class TestCaseBuilder(unittest.TestCase):
         case_builder.add_case(expression_builder.expression, Integer(0))
         case_builder.and_with_cases(BinaryOperation(">", Identifier("z"), Integer(0)))
 
-        assert case_builder.build() == "case\n  z > 0 & x in 0..10 : 10;\n  z > 0 & y > 0 : 0;\nesac;"
+        assert case_builder.build() == "case\n  z > 0 & x in 0..10 : 10;\n  z > 0 & y > 0 : 0;\nesac"
 
     def test_merge(self):
         case_builder = CaseBuilder()
@@ -112,8 +112,8 @@ class TestCaseBuilder(unittest.TestCase):
 
         case_builder.merge(second_case_builder)
 
-        assert case_builder.build() == "case\n  x in 0..10 : 10;\n  y > 0 : 0;\nesac;"
+        assert case_builder.build() == "case\n  x in 0..10 : 10;\n  y > 0 : 0;\nesac"
 
     def test_empty(self):
         case_builder = CaseBuilder()
-        assert case_builder.build() == "case\n\nesac;"
+        assert case_builder.build() == "case\n\nesac"

@@ -1,6 +1,5 @@
 from nusmv.model import *
 from nusmv.specification import *
-from nusmv.generator import *
 from copy import *
 
 
@@ -35,12 +34,21 @@ class Compiler:
         self.model_code = deepcopy(self.template.code)
 
         for replacement in reversed(self.template.replacements):
-            if replacement.module_name == self.snowball_generator.MODULE_NAME:
-                generator = self.snowball_generator
-            else:
-                generator = self.penguin_generator
+            insertion_key = Specification.insertion_key(replacement.module_name, replacement.tag)
 
-            if hasattr(generator, replacement.tag):
-                result = getattr(generator, replacement.tag)()
+            result = None
+
+            if insertion_key in self.specification.insertions:
+                result = self.specification.insertions[insertion_key]
+            else:
+                if replacement.module_name == self.snowball_generator.MODULE_NAME:
+                    generator = self.snowball_generator
+                else:
+                    generator = self.penguin_generator
+
+                if hasattr(generator, replacement.tag):
+                    result = getattr(generator, replacement.tag)()
+
+            if result is not None:
                 self.model_code = self.model_code[:replacement.origin] + result \
-                    + self.model_code[replacement.origin + replacement.length:]
+                                  + self.model_code[replacement.origin + replacement.length:]

@@ -88,7 +88,7 @@ class CaseBuilder:
         flatten_cases = list(map(lambda case: str(case), self.cases))
         flatten_cases = list(map(lambda s: "  " + s + ";", flatten_cases))
         flatten_cases_str = "\n".join(flatten_cases)
-        return "case\n" + flatten_cases_str + "\nesac;"
+        return "case\n" + flatten_cases_str + "\nesac"
 
     def __append_binary_operation(self, symbol, expression, case):
         return self.Case(BinaryOperation(symbol, expression, case.condition), case.value)

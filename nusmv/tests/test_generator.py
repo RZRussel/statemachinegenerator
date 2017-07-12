@@ -27,7 +27,7 @@ class TestSnowballGenerator(unittest.TestCase):
   direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
   direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_collision_detected(self):
         snowball_mappings = {K_SNOWBALL_RADIUS: 2, K_SNOWBALL_FLY_VELOCITY: 1}
@@ -51,7 +51,7 @@ esac;"""
   (next(x) - next(owner.opponent.x)) = 3 & (next(y) - next(owner.opponent.y)) in -2..2 : TRUE;
   (next(x) - next(owner.opponent.x)) = 4 & (next(y) - next(owner.opponent.y)) = 0 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_dead_point_reached(self):
         snowball_mappings = {K_SNOWBALL_RADIUS: 10, K_SNOWBALL_FLY_VELOCITY: 1}
@@ -74,7 +74,7 @@ esac;"""
   next(x) = 52 & next(y) in 51..52 : TRUE;
   next(x) = 53 & next(y) in 49..51 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
 
 class TestPenguinGenerator(unittest.TestCase):
@@ -95,7 +95,7 @@ class TestPenguinGenerator(unittest.TestCase):
   next(direction) in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
   next(direction) in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_snowball_initialized(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
@@ -122,7 +122,7 @@ esac;"""
   next(snowball.direction) in 339..344 & (next(snowball.x) - x) = 2 & (next(snowball.y) - y) = 2 : TRUE;
   next(snowball.direction) in 345..359 & (next(snowball.x) - x) = 1 & (next(snowball.y) - y) = 2 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_flashed(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
@@ -141,7 +141,7 @@ esac;"""
   direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
   direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_collision_detected(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
@@ -163,7 +163,7 @@ esac;"""
   (next(x) - next(opponent.x)) = 3 & (next(y) - next(opponent.y)) in -2..2 : TRUE;
   (next(x) - next(opponent.x)) = 4 & (next(y) - next(opponent.y)) = 0 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_pushed(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 2,
@@ -208,7 +208,7 @@ esac;"""
   pushed_velocity = 2 & pushed_index = 2 & direction in 319..345 & (next(x) - x) = 2 & (next(y) - y) = -1 : TRUE;
   pushed_velocity = 2 & pushed_index = 2 & direction in 346..359 & (next(x) - x) = 2 & (next(y) - y) = 0 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_pushed_initial_index(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 5, K_PENGUIN_FLASH_VELOCITY: 10,
@@ -220,7 +220,7 @@ esac;"""
   next(pushed_velocity) = 5 : 4;
   next(pushed_velocity) = 10 : 4;
   TRUE : 0;
-esac;"""
+esac"""
 
     def test_static_collision_initialized(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
@@ -270,7 +270,7 @@ esac;"""
   (opponent.x - x) = 0 & (opponent.y - y) = -2 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
   (opponent.x - x) = 0 & (opponent.y - y) = 2 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_flashing_collision(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 0, K_PENGUIN_FLASH_VELOCITY: 1,
@@ -320,7 +320,7 @@ esac;"""
   (opponent.x - x) = 0 & (opponent.y - y) = -2 & next(direction) = 90 & next(pushed_velocity) = 1 : TRUE;
   (opponent.x - x) = 0 & (opponent.y - y) = 2 & next(direction) = 270 & next(pushed_velocity) = 1 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""
 
     def test_dead_point_reached(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 2,
@@ -346,4 +346,4 @@ esac;"""
   next(x) = 53 & next(y) in 48..52 : TRUE;
   next(x) = 54 & next(y) in 49..51 : TRUE;
   TRUE : FALSE;
-esac;"""
+esac"""

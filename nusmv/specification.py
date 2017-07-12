@@ -1,4 +1,3 @@
-import yaml
 
 
 class World:
@@ -90,6 +89,7 @@ K_PENGUIN_SNOWBALL_OY = "snowball_oy"
 K_SNOWBALL_RADIUS = "radius"
 K_SNOWBALL_FLY_VELOCITY = "fly_velocity"
 
+
 class Specification:
     def __init__(self, world_mappings, island_mappings, penguin_mappings, snowball_mappings, insertions_mappings=None):
         self.world = World(world_mappings[K_WORLD_MAX_X], world_mappings[K_WORLD_MAX_Y])
@@ -100,3 +100,20 @@ class Specification:
                                penguin_mappings[K_PENGUIN_SNOWBALL_OX], penguin_mappings[K_PENGUIN_SNOWBALL_OY])
         self.snowball = Snowball(snowball_mappings[K_SNOWBALL_RADIUS], snowball_mappings[K_SNOWBALL_FLY_VELOCITY])
         self.insertions = insertions_mappings or {}
+
+    @staticmethod
+    def insertion_key(module_name, tag):
+        """
+        Static function to provide a way for building key to extract value from insertion mappings
+        :param module_name: string name of the module tag belongs to
+        :param tag: string tag representation
+        :return: string key to access value in the insertions_mappings
+
+        >>> Specification.insertion_key('Snowball', 'flew')
+        'Snowball.flew'
+        """
+        return module_name + "." + tag
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
