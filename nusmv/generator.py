@@ -20,6 +20,8 @@ K_PENGUIN_OTHER_PENGUIN = "opponent"
 
 
 class SnowballGenerator:
+    MODULE_NAME = "Snowball"
+
     def __init__(self, specification):
         self.specification = specification
 
@@ -133,6 +135,8 @@ class SnowballGenerator:
 
 
 class PenguinGenerator:
+    MODULE_NAME = "Penguin"
+
     def __init__(self, specification):
         self.specification = specification
 

@@ -6,9 +6,9 @@ class TestVerificationTemplate(unittest.TestCase):
     def test_add_replacement(self):
         template = VerificationTemplate("MODULE MyModule")
 
-        replacement = Replacement("position", 0, 10)
+        replacement = Replacement("MyModule", "position", 0, 10)
         template.add_replacement(replacement)
-        template.add_replacement(Replacement("velocity", 10, 15))
+        template.add_replacement(Replacement("MyModule", "velocity", 10, 15))
 
         assert len(template.replacements) == 2
         assert replacement in template.replacements
@@ -16,9 +16,9 @@ class TestVerificationTemplate(unittest.TestCase):
     def test_remove_replacement(self):
         template = VerificationTemplate("MODULE MyModule")
 
-        replacement = Replacement("position", 0, 10)
+        replacement = Replacement("MyModule", "position", 0, 10)
         template.add_replacement(replacement)
-        template.add_replacement(Replacement("velocity", 10, 15))
+        template.add_replacement(Replacement("MyModule", "velocity", 10, 15))
         template.remove_replacement(replacement)
 
         assert len(template.replacements) == 1
@@ -27,9 +27,9 @@ class TestVerificationTemplate(unittest.TestCase):
     def test_remove_all_replacements(self):
         template = VerificationTemplate("MODULE MyModule")
 
-        replacement = Replacement("position", 0, 10)
+        replacement = Replacement("MyModule", "position", 0, 10)
         template.add_replacement(replacement)
-        template.add_replacement(Replacement("velocity", 10, 15))
+        template.add_replacement(Replacement("MyModule", "velocity", 10, 15))
 
         template.remove_all_replacements()
 
@@ -37,7 +37,11 @@ class TestVerificationTemplate(unittest.TestCase):
         assert replacement not in template.replacements
 
 
-class TestTestCase(unittest.TestCase):
+class TestNuSMVModule(unittest.TestCase):
     def test_initialization(self):
-        test_case = TestCase("MODULE MyModule")
-        assert test_case.code == "MODULE MyModule"
+        nusmv_module = NuSMVModule("MyModule", "MODULE MyModule", 0, 15)
+
+        assert nusmv_module.name == "MyModule"
+        assert nusmv_module.code == "MODULE MyModule"
+        assert nusmv_module.origin == 0
+        assert nusmv_module.length == 15

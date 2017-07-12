@@ -1,9 +1,12 @@
 
 class Replacement:
-    """Class is designed to store replacement information of the verification template such as tag
+    """Class is designed to store replacement information of the verification template such as module name, tag
     and range"""
 
-    def __init__(self, tag, origin, length):
+    def __init__(self, module_name, tag, origin, length):
+        if type(module_name) != str:
+            raise TypeError("Expected string type for module_name")
+
         if type(tag) != str:
             raise TypeError("Expected string type for tag")
 
@@ -16,6 +19,7 @@ class Replacement:
         if type(length) != int:
             raise TypeError("Expected int type for length")
 
+        self.module_name = module_name
         self.tag = tag
         self.origin = origin
         self.length = length
@@ -44,8 +48,11 @@ class VerificationTemplate:
         self.replacements = []
 
 
-class TestCase:
-    """Class is designed to store nusmv test case code represented as a module"""
+class NuSMVModule:
+    """Class is designed to store nusmv module code"""
 
-    def __init__(self, code):
+    def __init__(self, name, code, origin, length):
+        self.name = name
         self.code = code
+        self.origin = origin
+        self.length = length

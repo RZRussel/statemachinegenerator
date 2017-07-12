@@ -1,6 +1,7 @@
-import yaml
 from nusmv.model import *
 from nusmv.specification import *
+import string
+
 
 class ParsingError(Exception):
     """Exception class to throw if error occures during parsing"""
@@ -35,72 +36,78 @@ def parse_template_from_string(code):
     origin = -1
     template = VerificationTemplate(code)
 
-    for i in range(0, len(code)):
-        if code[i] == '<':
-            if origin >= 0:
-                raise ParsingError("Unexpected < symbol while parsing tag")
-            origin = i
+    nusmv_modules = parse_modules_from_string(code)
+    for nusmv_module in nusmv_modules:
+        for i in range(0, len(nusmv_module.code)):
+            if nusmv_module.code[i] == '<':
+                if origin >= 0:
+                    raise ParsingError("Unexpected < symbol while parsing tag")
+                origin = i
 
-        if code[i] == '>':
-            if origin == -1:
-                raise ParsingError("Unexpected tag close symbol >")
+            if nusmv_module.code[i] == '>':
+                if origin == -1:
+                    raise ParsingError("Unexpected tag close symbol >")
 
-            if i - origin == 1:
-                raise ParsingError("Empty tag found")
+                if i - origin == 1:
+                    raise ParsingError("Empty tag found")
 
-            replacement = Replacement(code[origin + 1:i], origin, i - origin + 1)
-            template.add_replacement(replacement)
-            origin = -1
+                replacement = Replacement(nusmv_module.name, nusmv_module.code[origin + 1:i],
+                                          nusmv_module.origin + origin, i - origin + 1)
+                template.add_replacement(replacement)
+                origin = -1
 
     return template
 
 
-def parse_test_cases_from_file(filename):
+def parse_modules_from_file(filename):
     """
-    Creates list of TestCase objects from the content of file
+    Creates list of NuSMVModule objects from the content of file
     :param filename: nusmv test cases file's name
-    :return: list of TestCase objects
+    :return: list of NuSMVModule objects
     """
     with open(filename) as file:
         code = file.read()
-    return parse_test_cases_from_string(code)
+    return parse_modules_from_string(code)
 
 
-def parse_test_cases_from_string(code):
+def parse_modules_from_string(code):
     """
-    Parses nusmv code string to separate test cases represented as modules. Algorithm searches modules by
+    Parses nusmv code string to separate modules. Algorithm searches modules by
     'MODULE' keyword
     :param code: nusmv code string
-    :return: list TestCase objects
+    :return: List of NuSMVModule objects
     """
-    new_module_expected = True
-    origin = -1
-    progress = 0
-    pattern = "MODULE "
-    test_cases = []
+
+    name_origin = -1
+    name_length = 0
+    nusmv_modules = []
+    module_keyword_length = len(ModuleParserStateMachine.ModuleParserStateExpecting.K_MODULE)
+
+    state_machine = ModuleParserStateMachine()
 
     for i in range(0, len(code)):
-        if code[i] == '\n':
-            new_module_expected = True
-            progress = 0
-        elif code[i] in " \t" and new_module_expected and progress == 0:
-            continue
-        elif new_module_expected and pattern[progress] == code[i]:
-            progress = progress + 1
-            if progress == len(pattern):
-                if origin >= 0:
-                    test_code = code[origin:i-progress]
-                    test_cases.append(TestCase(test_code.strip(' \n\t\r')))
-                origin = i - progress + 1
-                new_module_expected = False
-        else:
-            new_module_expected = False
+        prev_state = state_machine.state
+        state_machine.accept(code[i])
 
-    if origin >= 0:
-        test_code = code[origin:len(code)]
-        test_cases.append(TestCase(test_code.strip(' \n\t\r')))
+        if type(state_machine.state) == ModuleParserStateMachine.ModuleParserStateNameStart:
+            if name_origin >= 0:
+                module_name = code[name_origin:name_origin+name_length]
+                module_code = code[name_origin-module_keyword_length:i-module_keyword_length+1]
+                nusmv_modules.append(NuSMVModule(module_name, module_code, name_origin-module_keyword_length,
+                                                 len(module_code)))
+            name_origin = i + 1
 
-    return test_cases
+        if (type(state_machine.state) != ModuleParserStateMachine.ModuleParserStateNameProgress
+           and type(prev_state) == ModuleParserStateMachine.ModuleParserStateNameProgress):
+            name_length = i - name_origin
+
+    if name_origin >= 0:
+        module_name = code[name_origin:name_origin + name_length]
+        module_code = code[name_origin - module_keyword_length:len(code)]
+        nusmv_modules.append(NuSMVModule(module_name, module_code, name_origin-module_keyword_length,
+                                         len(module_code)))
+
+    return nusmv_modules
 
 
 def parse_specification_from_file(filename):
@@ -132,3 +139,65 @@ def parse_specification_from_string(yaml_string):
         return Specification(world_mappings, island_mappings, penguin_mappings, snowball_mappings, insertions_mappings)
     else:
         return Specification(world_mappings, island_mappings, penguin_mappings, snowball_mappings)
+
+
+class ModuleParserStateMachine:
+    """
+    Class is designed to provide state machine interface for parsing nusmv modules.
+    Basically the state machine can detect module's beginning and name. Starting from expecting state,
+    machine accepts module keyword, name and then switches to the content state to wait
+    newline symbol which is always must precede non first module's.
+    """
+
+    class ModuleParserStateExpecting:
+        K_MODULE = 'MODULE '
+
+        def __init__(self, machine):
+            self.machine = machine
+            self.progress = 0
+
+        def accept(self, symbol):
+            if symbol == self.K_MODULE[self.progress]:
+                self.progress = self.progress + 1
+                if self.progress == len(self.K_MODULE):
+                    self.machine.state = ModuleParserStateMachine.ModuleParserStateNameStart(self.machine)
+            elif not (self.progress == 0 and symbol in set(string.whitespace)):
+                self.machine.state = ModuleParserStateMachine.ModuleParserStateContent(self.machine)
+
+    class ModuleParserStateNameStart:
+        def __init__(self, machine):
+            self.machine = machine
+
+        def accept(self, symbol):
+            if symbol in set(string.ascii_letters).union(set('_')):
+                self.machine.state = ModuleParserStateMachine.ModuleParserStateNameProgress(self.machine)
+            else:
+                raise ParsingError("Unexpected '" + symbol + "' as first module name's symbol")
+
+    class ModuleParserStateNameProgress:
+        def __init__(self, machine):
+            self.machine = machine
+
+        def accept(self, symbol):
+            if symbol not in set(string.ascii_letters).union(set(string.digits)).union(set('_$-')):
+                if symbol == '\n':
+                    self.machine.state = ModuleParserStateMachine.ModuleParserStateExpecting(self.machine)
+                else:
+                    self.machine.state = ModuleParserStateMachine.ModuleParserStateContent(self.machine)
+
+    class ModuleParserStateContent:
+        def __init__(self, machine):
+            self.machine = machine
+
+        def accept(self, symbol):
+            if symbol == '\n':
+                self.machine.state = ModuleParserStateMachine.ModuleParserStateExpecting(self.machine)
+
+    def __init__(self):
+        self.state = self.ModuleParserStateExpecting(self)
+
+    def accept(self, symbol):
+        if type(symbol) != str or len(symbol) != 1:
+            raise TypeError("Expected symbol as input")
+
+        self.state.accept(symbol)
