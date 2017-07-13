@@ -1,6 +1,6 @@
 # Safegame
 
-The goal of the project is to show how [Model Checking](https://en.wikipedia.org/wiki/Model_checking) verification method can be applied to multiplayer game development. The main idea is to generate a verification model based on the game model template, game parameters and a property which must be checked. Finally, [NuSMV](http://nusmv.fbk.eu) model checker can be applied to verify whether the generated model satifies the property. This approach is implemented for Penguin Clash game as an example.
+The goal of the project is to show how [Model Checking](https://en.wikipedia.org/wiki/Model_checking) verification method can be applied to multiplayer game development. The main idea is to generate a verification model based on the game model template, game parameters and a property which must be checked. Finally, [NuSMV](http://nusmv.fbk.eu) model checker can be applied to verify whether the generated model satifies the property. This approach is implemented for [Penguin Clash](https://github.com/RZRussel/statemachinegenerator/wiki/What-is-Penguin-Clash-game-about%3F) game as an example.
 
 ## Getting started
 
