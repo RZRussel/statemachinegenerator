@@ -93,7 +93,7 @@ MODULE Penguin\n  DEFINE\nPos = @moved@;\n VAR\n  b: 0..1;\n"""
         test_case_code = """MODULE TestCase\n  VAR\n  p1: Penguin();\n"""
         test_cases = parse_modules_from_string(test_case_code)
 
-        main_code = """MODULE Main\n  VAR\n    test: TestCase;\n"""
+        main_code = """MODULE main\n  VAR\n    test: TestCase;\n"""
 
         result = """MODULE Snowball\n  DEFINE\nPos = case
   direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
@@ -121,7 +121,7 @@ esac;\n  VAR\n  a: 0..10;\n"""
   TRUE : FALSE;
 esac;\n VAR\n  b: 0..1;\n"""
 
-        result = result + "\n" + test_cases[0].code + "\n" + main_code
+        result = result + "\n" + test_cases[0].code + "\n\n" + main_code
 
         assert compiler.model_code != compiler.compile(test_cases[0])
         assert compiler.compile(test_cases[0]) == result
@@ -142,7 +142,7 @@ MODULE Penguin\n  DEFINE\nPos = @moved@;\n VAR\n  b: 0..1;\n"""
         test_case_code = """MODULE TestCase\n  VAR\n  p1: Penguin();\n"""
         test_cases = parse_modules_from_string(test_case_code)
 
-        main_code = """MODULE Main\n  VAR\n    test: TestCase;\n"""
+        main_code = """MODULE main\n  VAR\n    test: TestCase;\n"""
 
         result = """MODULE Snowball\n  DEFINE\nPos = case
   direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
@@ -159,7 +159,7 @@ esac;\n  VAR\n  a: 0..10;\n"""
 
         result = result + """MODULE Penguin\n  DEFINE\nPos = FALSE;\n VAR\n  b: 0..1;\n"""
 
-        result = result + "\n" + test_cases[0].code + "\n" + main_code
+        result = result + "\n" + test_cases[0].code + "\n\n" + main_code
 
         assert compiler.model_code != compiler.compile(test_cases[0])
         assert compiler.compile(test_cases[0]) == result

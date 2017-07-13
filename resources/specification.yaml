@@ -39,4 +39,5 @@ specification:
     fly_velocity: 10
 
   insertions:
-    max_pushed_velocity: 10
+    Penguin.max_pushed_velocity: "10"
+    Snowball.collision_detected: "FALSE"

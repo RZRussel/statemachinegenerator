@@ -25,8 +25,8 @@ class Compiler:
 
     def compile(self, test_case=None):
         if test_case is not None:
-            main_code = "MODULE Main\n  VAR\n    test: " + test_case.name + ";\n"
-            return self.model_code + "\n" + test_case.code + "\n" + main_code
+            main_code = "MODULE main\n  VAR\n    test: " + test_case.name + ";\n"
+            return self.model_code + "\n" + test_case.code + "\n\n" + main_code
         else:
             return self.model_code
 
