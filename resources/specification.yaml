@@ -39,5 +39,4 @@ specification:
     fly_velocity: 10
 
   insertions:
-    snowball_timer_max: 60
-    pushing_index_max: 15
+    max_pushed_velocity: 10

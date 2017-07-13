@@ -1,0 +1,79 @@
+MODULE MovementBehavior
+  VAR
+    world: World;
+    island: Island(world);
+    p1: Penguin(world, p2);
+    p2: Penguin(world, p1);
+
+  ASSIGN
+    init(p1.x) := 300;
+    init(p1.y) := 207;
+    init(p1.direction) := 0;
+    init(p1.dead) := FALSE;
+    p1.stun_timer := 0;
+    p1.flash_index := 0;
+    p1.flash_timer := 0;
+    p1.pushed_index := 0;
+    p1.pushed_velocity := 0;
+    init(p1.penguin_collision) := 0b_0;
+    p1.snowball_collision := 0b_0;
+    p1.snowball_timer := 0;
+    p1.snowball.x := 0;
+    p1.snowball.y := 0;
+    p1.snowball.direction := 0;
+    p1.snowball.fly_flag := FALSE;
+
+    init(p2.x) := 368;
+    init(p2.y) := 207;
+    p2.direction := 180;
+    p2.dead := FALSE;
+    p2.stun_timer := 0;
+    p2.flash_index := 0;
+    p2.flash_timer := 0;
+    p2.pushed_index := 0;
+    p2.pushed_velocity := 0;
+    init(p2.penguin_collision) := 0b_0;
+    p2.snowball_collision := 0b_0;
+    p2.snowball_timer := 0;
+    p2.snowball.x := 0;
+    p2.snowball.y := 0;
+    p2.snowball.fly_flag := FALSE;
+    p2.snowball.direction := 0;
+
+  TRANS
+    p1.Move | p1.Dead
+    | next(p1.x) = p1.x & next(p1.y) = p1.y & next(p1.direction) = p1.direction
+      & next(p1.stun_timer) = p1.stun_timer
+      & next(p1.flash_index) = p1.flash_index
+      & next(p1.flash_timer) = p1.flash_timer
+      & next(p1.pushed_index) = p1.pushed_index
+      & next(p1.pushed_velocity) = p1.pushed_velocity
+      & !next(p1.dead) & !p1.dead
+      & bool(next(p1.penguin_collision)) & bool(p1.penguin_collision)
+      & !bool(next(p1.snowball_collision)) & !bool(p1.snowball_collision)
+      & next(p1.snowball_timer) = p1.snowball_timer;
+
+  TRANS
+    p2.Stay
+    | next(p2.x) = p2.x & next(p2.y) = p2.y & next(p2.direction) = p2.direction
+      & next(p2.stun_timer) = p2.stun_timer
+      & next(p2.flash_index) = p2.flash_index
+      & next(p2.flash_timer) = p2.flash_timer
+      & next(p2.pushed_index) = p2.pushed_index
+      & next(p2.pushed_velocity) = p2.pushed_velocity
+      & !next(p2.dead) & !p2.dead
+      & bool(next(p2.penguin_collision)) & bool(p2.penguin_collision)
+      & !bool(next(p2.snowball_collision)) & !bool(p2.snowball_collision)
+      & next(p2.snowball_timer) = p2.snowball_timer;
+
+  CTLSPEC
+    EF (p1.dead);  
+
+  CTLSPEC
+    AG (!p2.dead);  
+
+  CTLSPEC
+    AG EF (bool(p2.penguin_collision) & bool(p1.penguin_collision));
+
+  CTLSPEC
+    AG (!p1.dead -> EF (bool(p2.penguin_collision) & bool(p1.penguin_collision)));

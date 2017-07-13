@@ -278,7 +278,7 @@ esac"""
         penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
                                                            STUB_SNOWBALL_MAPPINGS))
 
-        assert penguin_generator.flashing_collision_initialized() == """case
+        assert penguin_generator.flash_collision_initialized() == """case
   (opponent.x - x) = 1 & (opponent.y - y) = 3 & next(direction) = 252 & next(pushed_velocity) = 1 : TRUE;
   (opponent.x - x) = -2 & (opponent.y - y) = 0 & next(direction) = 0 & next(pushed_velocity) = 1 : TRUE;
   (opponent.x - x) = -3 & (opponent.y - y) = -2 & next(direction) = 34 & next(pushed_velocity) = 1 : TRUE;

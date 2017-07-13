@@ -325,7 +325,7 @@ class PenguinGenerator:
     def static_collision_initialized(self):
         return self.___collision_initialized(self.specification.penguin.move_velocity)
 
-    def flashing_collision_initialized(self):
+    def flash_collision_initialized(self):
         return self.___collision_initialized(self.specification.penguin.flash_velocity)
 
     def collision_detected(self):
