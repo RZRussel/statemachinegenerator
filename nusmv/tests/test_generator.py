@@ -222,6 +222,14 @@ esac"""
   TRUE : 0;
 esac"""
 
+    def test_max_pushed_index(self):
+        penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 5, K_PENGUIN_FLASH_VELOCITY: 10,
+                            K_PENGUIN_SLIDING_FRICTION: 1, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
+        penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
+                                                           STUB_SNOWBALL_MAPPINGS))
+
+        assert penguin_generator.max_pushed_index() == "4"
+
     def test_static_collision_initialized(self):
         penguin_mappings = {K_PENGUIN_RADIUS: 2, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
                             K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}

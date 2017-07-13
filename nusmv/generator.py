@@ -322,6 +322,18 @@ class PenguinGenerator:
 
         return builder.build()
 
+    def max_pushed_index(self):
+        possible_velocities = [self.specification.penguin.move_velocity, self.specification.penguin.flash_velocity]
+        max_index = 0
+
+        for v in possible_velocities:
+            fading_velocities = fading_velocities_list(self.specification.penguin.sliding_friction, v)
+
+            if len(fading_velocities) > max_index:
+                max_index = len(fading_velocities)
+
+        return str(max_index)
+
     def static_collision_initialized(self):
         return self.___collision_initialized(self.specification.penguin.move_velocity)
 

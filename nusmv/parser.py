@@ -40,22 +40,17 @@ def parse_template_from_string(code):
     nusmv_modules = parse_modules_from_string(code)
     for nusmv_module in nusmv_modules:
         for i in range(0, len(nusmv_module.code)):
-            if nusmv_module.code[i] == '<':
+            if nusmv_module.code[i] == '@':
                 if origin >= 0:
-                    raise ParsingError("Unexpected < symbol while parsing tag")
-                origin = i
+                    if i - origin == 1:
+                        raise ParsingError("Empty tag found")
 
-            if nusmv_module.code[i] == '>':
-                if origin == -1:
-                    raise ParsingError("Unexpected tag close symbol >")
-
-                if i - origin == 1:
-                    raise ParsingError("Empty tag found")
-
-                replacement = Replacement(nusmv_module.name, nusmv_module.code[origin + 1:i],
-                                          nusmv_module.origin + origin, i - origin + 1)
-                template.add_replacement(replacement)
-                origin = -1
+                    replacement = Replacement(nusmv_module.name, nusmv_module.code[origin + 1:i],
+                                              nusmv_module.origin + origin, i - origin + 1)
+                    template.add_replacement(replacement)
+                    origin = -1
+                elif origin == -1:
+                    origin = i
 
     return template
 

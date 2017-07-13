@@ -4,7 +4,7 @@ from nusmv.parser import *
 
 class TestTemplateParser(unittest.TestCase):
     def test_with_two_tags(self):
-        code = """MODULE Actor\n\tMoved = <moved>;\n\tFalled = <falled>;\n\tVAR\n\ta: int;'"""
+        code = """MODULE Actor\n\tMoved = @moved@;\n\tFalled = @falled@;\n\tVAR\n\ta: int;'"""
 
         template = parse_template_from_string(code)
 
@@ -20,7 +20,7 @@ class TestTemplateParser(unittest.TestCase):
         assert template.replacements[1].length == 8
 
     def test_with_two_modules_two_tags(self):
-        code = """MODULE Action\nMODULE Actor\n\tMoved = <moved>;\n\tFalled = <falled>;\n\tVAR\n\ta: int;'"""
+        code = """MODULE Action\nMODULE Actor\n\tMoved = @moved@;\n\tFalled = @falled@;\n\tVAR\n\ta: int;'"""
 
         template = parse_template_from_string(code)
 

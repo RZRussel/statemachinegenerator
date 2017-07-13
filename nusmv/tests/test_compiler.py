@@ -26,8 +26,8 @@ class TestCompiler(unittest.TestCase):
         specification = Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, STUB_PENGUIN_MAPPINGS,
                                       STUB_SNOWBALL_MAPPINGS)
 
-        template_code = """MODULE Snowball\n  DEFINE\nPos = <moved>;\n  VAR\n  a: 0..10;\n
-        MODULE Penguin\n  DEFINE\nPos = <flew>;\n VAR\n  b: 0..1;\n"""
+        template_code = """MODULE Snowball\n  DEFINE\nPos = @moved@;\n  VAR\n  a: 0..10;\n
+        MODULE Penguin\n  DEFINE\nPos = @flew@;\n VAR\n  b: 0..1;\n"""
 
         template = parse_template_from_string(template_code)
         compiler = Compiler(template, specification, PenguinGenerator(specification), SnowballGenerator(specification))
@@ -42,8 +42,8 @@ class TestCompiler(unittest.TestCase):
         specification = Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
                                       snowball_mappings)
 
-        template_code = """MODULE Snowball\n  DEFINE\nPos = <flew>;\n  VAR\n  a: 0..10;
-MODULE Penguin\n  DEFINE\nPos = <moved>;\n VAR\n  b: 0..1;\n"""
+        template_code = """MODULE Snowball\n  DEFINE\nPos = @flew@;\n  VAR\n  a: 0..10;
+MODULE Penguin\n  DEFINE\nPos = @moved@;\n VAR\n  b: 0..1;\n"""
 
         template = parse_template_from_string(template_code)
         compiler = Compiler(template, specification, PenguinGenerator(specification), SnowballGenerator(specification))
@@ -84,8 +84,8 @@ esac;\n VAR\n  b: 0..1;\n"""
         specification = Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
                                       snowball_mappings)
 
-        template_code = """MODULE Snowball\n  DEFINE\nPos = <flew>;\n  VAR\n  a: 0..10;
-MODULE Penguin\n  DEFINE\nPos = <moved>;\n VAR\n  b: 0..1;\n"""
+        template_code = """MODULE Snowball\n  DEFINE\nPos = @flew@;\n  VAR\n  a: 0..10;
+MODULE Penguin\n  DEFINE\nPos = @moved@;\n VAR\n  b: 0..1;\n"""
 
         template = parse_template_from_string(template_code)
         compiler = Compiler(template, specification, PenguinGenerator(specification), SnowballGenerator(specification))
@@ -133,8 +133,8 @@ esac;\n VAR\n  b: 0..1;\n"""
         specification = Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
                                       snowball_mappings, {"Penguin.moved": "FALSE"})
 
-        template_code = """MODULE Snowball\n  DEFINE\nPos = <flew>;\n  VAR\n  a: 0..10;
-MODULE Penguin\n  DEFINE\nPos = <moved>;\n VAR\n  b: 0..1;\n"""
+        template_code = """MODULE Snowball\n  DEFINE\nPos = @flew@;\n  VAR\n  a: 0..10;
+MODULE Penguin\n  DEFINE\nPos = @moved@;\n VAR\n  b: 0..1;\n"""
 
         template = parse_template_from_string(template_code)
         compiler = Compiler(template, specification, PenguinGenerator(specification), SnowballGenerator(specification))

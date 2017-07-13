@@ -12,7 +12,7 @@ def main(argv):
     """
     Parses command line arguments and executes the process of compiling the template into nusmv executable model.
 
-    Usage: python nusmv.py -s <specification> -t <template> [-c <list of test cases>] [-d <destination directory>] [-h]
+    Usage: python smv.py -s <specification> -t <template> [-c <list of test cases>] [-d <destination directory>] [-h]
 
     :param argv: Command line argument list
     :return: No return value
@@ -46,13 +46,22 @@ def main(argv):
         print(usage_string())
         sys.exit(1)
 
+    if not os.path.isabs(specification_path):
+        specification_path = os.path.join(os.getcwd(), specification_path)
+
     if not os.access(specification_path, os.F_OK):
         print("Can't find specification file " + specification_path)
         sys.exit(1)
 
+    if not os.path.isabs(template_path):
+        template_path = os.path.join(os.getcwd(), template_path)
+
     if not os.access(template_path, os.F_OK):
         print("Can't find template file " + template_path)
         sys.exit(1)
+
+    if test_case_path is not None and not os.path.isabs(test_case_path):
+        test_case_path = os.path.join(os.getcwd(), test_case_path)
 
     if test_case_path is not None and not os.access(test_case_path, os.F_OK):
         print("Can't find test case file " + test_case_path)
@@ -60,6 +69,8 @@ def main(argv):
 
     if directory is None:
         directory = os.getcwd()
+    elif not os.path.isabs(directory):
+        directory = os.path.join(os.getcwd(), directory)
 
     if not os.access(directory, os.F_OK):
         os.mkdir(directory)
@@ -68,10 +79,10 @@ def main(argv):
 
 
 def execute(specification_path, template_path, test_case_path, directory):
-    specification = parse_modules_from_file(specification_path)
+    specification = parse_specification_from_file(specification_path)
     template = parse_template_from_file(template_path)
 
-    compiler = Compiler(specification, template, PenguinGenerator(specification), SnowballGenerator(specification))
+    compiler = Compiler(template, specification, PenguinGenerator(specification), SnowballGenerator(specification))
 
     if test_case_path is not None:
         test_cases = parse_modules_from_file(test_case_path)
@@ -102,7 +113,7 @@ def usage_string():
     :return: String value.
     """
 
-    usage = """Usage:\npython nusmv.py -s <specification> -t <template> [-c <test case>]\
+    usage = """Usage:\npython smv.py -s <specification> -t <template> [-c <test case>]\
  [-d <destination directory>] [-h]"""
     usage = usage + "\n\n" + "-h\n Optional flag that prints usage of the script."
     usage = usage + "\n\n" + "-s\n Mandatory flag (if no -h flag) to provide path to the yaml specification file."

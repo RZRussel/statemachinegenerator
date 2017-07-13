@@ -2,16 +2,16 @@
 MODULE Snowball(world, owner)
 
   DEFINE 
-    d_radius := 10; -- 10
-  	d_fly_velocity := 10; -- 10
+    d_radius := 10; -- snowball's radius
+  	d_fly_velocity := 10; -- snowball's flying velocity
 
   -- relations --
   DEFINE
-    FlightPosChanged := <flew>;
+    FlightPosChanged := @flew@;
 
-    CollisionDetected := <collision_detected>;
+    CollisionDetected := @collision_detected@;
 
-    DeadPointReached := <dead_point_reached>;
+    DeadPointReached := @dead_point_reached@;
 
   VAR
     x: 0..world.d_max_x; -- x position in the world --
@@ -50,29 +50,29 @@ MODULE Penguin(world, opponent)
   	d_flash_index_max := 15; -- initial index in the flash process (process is active while index > 0)
   	d_flash_velocity := 10; -- initial penguin's velocity while flash action
   	d_flash_timer_max := 60;  -- time during which penguin can't perform flash action again
-    d_penguin_pushed_index_max := <max_pushed_index>; -- maximum index penguin can have when pushed
-    d_penguin_pushed_velocity_max := <max_pushed_velocity>; -- maximum velocity penguin can have when pushed 
+    d_penguin_pushed_index_max := @max_pushed_index@; -- maximum index penguin can have when pushed
+    d_penguin_pushed_velocity_max := @max_pushed_velocity@; -- maximum velocity penguin can have when pushed 
   	d_snowball_timer_max := 60; -- time during which penguin can't perform throwing snowball again
 
   -- relations --
   DEFINE
-    MovePosChanged := <moved>;
+    MovePosChanged := @moved@;
 
-    SnowballInit := <snowball_initialized>;
+    SnowballInit := @snowball_initialized@;
     
-    FlashPosChanged := <flashed>;
+    FlashPosChanged := @flashed@;
 
-    PushedPosChanged := <pushed>;
+    PushedPosChanged := @pushed@;
 
-    PushedInitIndex := <pushed_initial_index>;
+    PushedInitIndex := @pushed_initial_index@;
 
-    StaticCollisionInitialized := <static_collision_initialized>;
+    StaticCollisionInitialized := @static_collision_initialized@;
 
-    FlashCollisionInitialized := <flash_collision_initialized>;
+    FlashCollisionInitialized := @flash_collision_initialized@;
 
-    CollisionDetected := <collision_detected>;
+    CollisionDetected := @collision_detected@;
 
-    DeadPointReached := <dead_point_reached>;
+    DeadPointReached := @dead_point_reached@;
 
   StunTimerAct := next(stun_timer) = d_stun_timer_max;
   StunTimerTick := stun_timer > 0 & next(stun_timer) = stun_timer - 1;
@@ -85,7 +85,7 @@ MODULE Penguin(world, opponent)
   SnowballTimerDeact := snowball_timer = 0 & next(snowball_timer) = 0;
 
   PenguinCollisionChecked := bool(next(penguin_collision)) = (CollisionDetected & !next(dead) & !next(opponent.dead));
-  SnowballCollisionChecked := bool(next(snowball_collision)) = FALSE;--(opponent.snowball.CollisionDetected & !next(dead) & next(opponent.snowball.fly_flag));
+  SnowballCollisionChecked := bool(next(snowball_collision)) = (opponent.snowball.CollisionDetected & !next(dead) & next(opponent.snowball.fly_flag));
 
   VAR
   	x: 0..world.d_max_x; -- current x penguin's position in the world
@@ -94,8 +94,8 @@ MODULE Penguin(world, opponent)
   	stun_timer: 0..d_stun_timer_max; -- current remained time during which penguin can do nothing
   	flash_index: 0..d_flash_index_max; -- current index of the flash action
   	flash_timer: 0..d_flash_timer_max; -- current remained time during which penguin can't perform push action
-  	pushed_index: 0..world.d_penguin_pushed_index_max; -- current velocity index of the pushed penguin
-  	pushed_velocity: 0..world.d_penguin_pushed_velocity_max; -- initial velocity penguin received after the push
+  	pushed_index: 0..d_penguin_pushed_index_max; -- current velocity index of the pushed penguin
+  	pushed_velocity: 0..d_penguin_pushed_velocity_max; -- initial velocity penguin received after the push
     dead: boolean; -- flag states whether penguin dead
     penguin_collision: unsigned word[1]; -- flags states whether there is a collision with i-th penguin
   	snowball_collision: unsigned word[1]; -- flags states whether there is a collision with i-th snowball
