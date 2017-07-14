@@ -11,10 +11,10 @@ class Compiler:
     """
     def __init__(self, template, specification, penguin_generator, snowball_generator):
         if type(template) != VerificationTemplate:
-            raise TypeError("Expected template of VerificationTemplate class but received " + type(template))
+            raise TypeError("Expected template of VerificationTemplate class but received " + str(type(template)))
 
         if type(specification) != Specification:
-            raise TypeError("Expected specification of Specification class but received " + type(template))
+            raise TypeError("Expected specification of Specification class but received " + str(type(template)))
 
         self.template = template
         self.specification = specification
