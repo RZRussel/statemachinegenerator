@@ -36,7 +36,7 @@ NuSMV -v 5 movement_behavior_model.smv
 ```
 
 If the model checker starts verification process and doesn't terminate with an error than installation completed successfully. 
-Press CTRL+C to terminate NuSMV execution.
+Press CTRL+C to terminate the NuSMV execution.
 
 <b>[Read Wiki page to learn more about Safegame](https://github.com/RZRussel/statemachinegenerator/wiki)</b>
 
