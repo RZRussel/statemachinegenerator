@@ -5,7 +5,6 @@ from physics import *
 class TestPhysics(unittest.TestCase):
     def test_radial_moves(self):
         positions = set(radial_moves(1))
-        print(positions)
         assert len(positions) == 8
         assert (1, 1) in positions
         assert (0, 1) in positions

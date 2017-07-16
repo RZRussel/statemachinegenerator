@@ -19,14 +19,14 @@ def radial_moves(velocity):
         y = velocity * sin(radians(i))
 
         if x >= 0:
-            x = int(x + 0.5)
+            x = int(x + 0.51)
         else:
-            x = int(x - 0.5)
+            x = int(x - 0.51)
 
         if y >= 0:
-            y = int(y + 0.5)
+            y = int(y + 0.51)
         else:
-            y = int(y - 0.5)
+            y = int(y - 0.51)
 
         positions.append((x, y))
 
