@@ -129,7 +129,19 @@ esac"""
                             K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
         penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
                                                            STUB_SNOWBALL_MAPPINGS))
-
+        print(penguin_generator.flashed())
+        print("""case
+  direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  direction in 31..60 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;
+  direction in 61..120 & (next(x) - x) = 0 & (next(y) - y) = 1 : TRUE;
+  direction in 121..149 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;
+  direction in 150..209 & (next(x) - x) = -1 & (next(y) - y) = 0 : TRUE;
+  direction in 210..240 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;
+  direction in 241..300 & (next(x) - x) = 0 & (next(y) - y) = -1 : TRUE;
+  direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
+  direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  TRUE : FALSE;
+esac""")
         assert penguin_generator.flashed() == """case
   direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
   direction in 31..60 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;
@@ -171,43 +183,43 @@ esac"""
         penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
                                                            STUB_SNOWBALL_MAPPINGS))
 
-        assert penguin_generator.pushed() == """case\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 31..60 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 61..120 & (next(x) - x) = 0 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 121..149 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 150..209 & (next(x) - x) = -1 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 210..240 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 241..300 & (next(x) - x) = 0 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 1 & pushed_index = 1 & direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 31..60 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 61..120 & (next(x) - x) = 0 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 121..149 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 150..209 & (next(x) - x) = -1 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 210..240 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 241..300 & (next(x) - x) = 0 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 1 & direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 0..14 & (next(x) - x) = 2 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 15..41 & (next(x) - x) = 2 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 42..48 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 49..75 & (next(x) - x) = 1 & (next(y) - y) = 2 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 76..104 & (next(x) - x) = 0 & (next(y) - y) = 2 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 105..131 & (next(x) - x) = -1 & (next(y) - y) = 2 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 132..138 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 139..165 & (next(x) - x) = -2 & (next(y) - y) = 1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 166..194 & (next(x) - x) = -2 & (next(y) - y) = 0 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 195..221 & (next(x) - x) = -2 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 222..228 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 229..255 & (next(x) - x) = -1 & (next(y) - y) = -2 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 256..284 & (next(x) - x) = 0 & (next(y) - y) = -2 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 285..311 & (next(x) - x) = 1 & (next(y) - y) = -2 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 312..318 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 319..345 & (next(x) - x) = 2 & (next(y) - y) = -1 : TRUE;\n\
-  pushed_velocity = 2 & pushed_index = 2 & direction in 346..359 & (next(x) - x) = 2 & (next(y) - y) = 0 : TRUE;\n\
-  TRUE : FALSE;\n\
+        assert penguin_generator.pushed() == """case
+  pushed_velocity = 1 & pushed_index = 1 & direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 31..60 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 61..120 & (next(x) - x) = 0 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 121..149 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 150..209 & (next(x) - x) = -1 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 210..240 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 241..300 & (next(x) - x) = 0 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 1 & pushed_index = 1 & direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 0..30 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 31..60 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 61..120 & (next(x) - x) = 0 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 121..149 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 150..209 & (next(x) - x) = -1 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 210..240 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 241..300 & (next(x) - x) = 0 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 301..330 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 1 & direction in 331..359 & (next(x) - x) = 1 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 0..14 & (next(x) - x) = 2 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 15..41 & (next(x) - x) = 2 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 42..48 & (next(x) - x) = 1 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 49..75 & (next(x) - x) = 1 & (next(y) - y) = 2 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 76..104 & (next(x) - x) = 0 & (next(y) - y) = 2 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 105..131 & (next(x) - x) = -1 & (next(y) - y) = 2 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 132..138 & (next(x) - x) = -1 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 139..165 & (next(x) - x) = -2 & (next(y) - y) = 1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 166..194 & (next(x) - x) = -2 & (next(y) - y) = 0 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 195..221 & (next(x) - x) = -2 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 222..228 & (next(x) - x) = -1 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 229..255 & (next(x) - x) = -1 & (next(y) - y) = -2 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 256..284 & (next(x) - x) = 0 & (next(y) - y) = -2 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 285..311 & (next(x) - x) = 1 & (next(y) - y) = -2 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 312..318 & (next(x) - x) = 1 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 319..345 & (next(x) - x) = 2 & (next(y) - y) = -1 : TRUE;
+  pushed_velocity = 2 & pushed_index = 2 & direction in 346..359 & (next(x) - x) = 2 & (next(y) - y) = 0 : TRUE;
+  TRUE : FALSE;
 esac"""
 
     def test_pushed_initial_index(self):
