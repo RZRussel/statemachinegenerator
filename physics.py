@@ -15,8 +15,19 @@ def radial_moves(velocity):
 
     positions = []
     for i in range(0, 360):
-        x = int(round(velocity * cos(radians(i))))
-        y = int(round(velocity * sin(radians(i))))
+        x = velocity * cos(radians(i))
+        y = velocity * sin(radians(i))
+
+        if x >= 0:
+            x = int(x + 0.5)
+        else:
+            x = int(x - 0.5)
+
+        if y >= 0:
+            y = int(y + 0.5)
+        else:
+            y = int(y - 0.5)
+
         positions.append((x, y))
 
     return positions
