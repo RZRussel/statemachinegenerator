@@ -15,18 +15,8 @@ def radial_moves(velocity):
 
     positions = []
     for i in range(0, 360):
-        x = velocity * cos(radians(i))
-        y = velocity * sin(radians(i))
-
-        if x >= 0:
-            x = int(x + 0.51)
-        else:
-            x = int(x - 0.51)
-
-        if y >= 0:
-            y = int(y + 0.51)
-        else:
-            y = int(y - 0.51)
+        x = round(velocity * cos(radians(i)))
+        y = round(velocity * sin(radians(i)))
 
         positions.append((x, y))
 
@@ -46,8 +36,8 @@ def rotate_position(position):
 
     positions = []
     for i in range(0, 360):
-        x = int(round(position[0]*cos(radians(i)) - position[1]*sin(radians(i))))
-        y = int(round(position[0]*sin(radians(i)) + position[1]*cos(radians(i))))
+        x = round(position[0]*cos(radians(i)) - position[1]*sin(radians(i)))
+        y = round(position[0]*sin(radians(i)) + position[1]*cos(radians(i)))
         positions.append((x, y))
 
     return positions
@@ -66,7 +56,7 @@ def fading_velocities_list(friction, initial_velocity):
 
     t = 1
     while velocities[-1] > 0:
-        velocities.append(int(round(initial_velocity*exp(-t*friction))))
+        velocities.append(round(initial_velocity*exp(-t*friction)))
         t = t + 1
 
     return list(reversed(velocities))
@@ -174,13 +164,13 @@ def reversed_direction(vector):
         else:
             return 90
     elif vector[0] > 0 and vector[1] >= 0:
-        return 180 + int(round(atan(vector[1] / vector[0]) * 180 / pi))
+        return 180 + round(atan(vector[1] / vector[0]) * 180 / pi)
     elif vector[0] > 0 and vector[1] < 0:
-        return 180 - int(round(atan(-vector[1] / vector[0]) * 180 / pi))
+        return 180 - round(atan(-vector[1] / vector[0]) * 180 / pi)
     elif vector[0] < 0 and vector[1] > 0:
-        return 360 - int(round(atan(vector[1] / -vector[0]) * 180 / pi)) % 360
+        return 360 - round(atan(vector[1] / -vector[0]) * 180 / pi) % 360
     elif vector[0] < 0 and vector[1] <= 0:
-        return int(round(atan(-vector[1] / -vector[0]) * 180 / pi))
+        return round(atan(-vector[1] / -vector[0]) * 180 / pi)
 
 if __name__ == "__main__":
     import doctest
