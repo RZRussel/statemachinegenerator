@@ -1,0 +1,66 @@
+MODULE MovementBehavior
+  VAR
+    world: World;
+    island: Island(world);
+    p1: Penguin(world, p2);
+    p2: Penguin(world, p1);
+
+  ASSIGN
+    p1.x := 300;
+    p1.y := 207;
+    init(p1.direction) := 180;
+    p1.dead := FALSE;
+    p1.stun_timer := 0;
+    p1.flash_index := 0;
+    p1.flash_timer := 0;
+    p1.pushed_index := 0;
+    p1.pushed_velocity := 0;
+    p1.penguin_collision := 0b_0;
+    init(p1.snowball_collision) := 0b_0;
+    init(p1.snowball_timer) := 0;
+    init(p1.snowball.x) := 0;
+    init(p1.snowball.y) := 0;
+    init(p1.snowball.direction) := 0;
+    init(p1.snowball.fly_flag) := FALSE;
+
+    p2.x := 368;
+    p2.y := 207;
+    p2.direction := 180;
+    p2.dead := FALSE;
+    p2.stun_timer := 0;
+    p2.flash_index := 0;
+    p2.flash_timer := 0;
+    p2.pushed_index := 0;
+    p2.pushed_velocity := 0;
+    p2.penguin_collision := 0b_0;
+    init(p2.snowball_collision) := 0b_0;
+    p2.snowball_timer := 0;
+    p2.snowball.x := 0;
+    p2.snowball.y := 0;
+    p2.snowball.fly_flag := FALSE;
+    p2.snowball.direction := 0;
+
+  TRANS
+    p1.Stay | p1.Throw;
+
+  TRANS
+    p1.snowball.Deact | p1.snowball.owner.Throw | p1.snowball.Fly | p1.snowball.Collide
+
+  TRANS
+    p2.Stay
+    | next(p2.x) = p2.x & next(p2.y) = p2.y & next(p2.direction) = p2.direction
+      & next(p2.stun_timer) = p2.stun_timer
+      & next(p2.flash_index) = p2.flash_index
+      & next(p2.flash_timer) = p2.flash_timer
+      & next(p2.pushed_index) = p2.pushed_index
+      & next(p2.pushed_velocity) = p2.pushed_velocity
+      & !next(p2.dead) & !p2.dead
+      & !bool(next(p2.penguin_collision)) & !bool(p2.penguin_collision)
+      & bool(next(p2.snowball_collision)) & bool(p2.snowball_collision)
+      & next(p2.snowball_timer) = p2.snowball_timer;
+
+  CTLSPEC
+    AG (p1.snowball.fly_flag -> EF !p1.snowball.fly_flag);
+
+  CTLSPEC
+    AG !bool(p2.snowball_collision);
