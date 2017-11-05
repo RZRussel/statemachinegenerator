@@ -1,0 +1,17 @@
+Agent Penguin
+	Vars
+		x: 0..@d_max_x@;
+		y: 0..@d_max_y@;
+		direction: 0..359;
+	end Vars
+
+	Actions = {Move, Stay};
+
+	Protocol
+	    Other: {Move, Stay}
+	end Protocol
+
+	Evolution
+	    @moved@
+	end Evolution
+end Agent
