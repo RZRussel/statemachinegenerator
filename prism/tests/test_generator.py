@@ -21,4 +21,16 @@ class TestPenguinGenerator(unittest.TestCase):
         precondition_builder = ExpressionBuilder(Identifier("dead"))
         precondition_builder.append_not()
 
-        print(penguin_generator.moved(precondition_builder.expression, label))
+        #print(penguin_generator.moved(precondition_builder.expression, label))
+
+    def test_island_collision(self):
+        penguin_mappings = {K_PENGUIN_RADIUS: 10, K_PENGUIN_MOVE_VELOCITY: 1, K_PENGUIN_FLASH_VELOCITY: 1,
+                            K_PENGUIN_SLIDING_FRICTION: 3, K_PENGUIN_SNOWBALL_OX: 10, K_PENGUIN_SNOWBALL_OY: 15}
+        penguin_generator = PenguinGenerator(Specification(STUB_WORLD_MAPPINGS, STUB_ISLAND_MAPPINGS, penguin_mappings,
+                                                           STUB_SNOWBALL_MAPPINGS))
+
+        label = "collide"
+        precondition_builder = ExpressionBuilder(Identifier(K_ISLAND_COLLISION))
+        precondition_builder.append_not()
+
+        print(penguin_generator.collide_island(precondition_builder.expression, label))

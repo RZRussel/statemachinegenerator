@@ -116,8 +116,8 @@ class GuardBuilder:
     def guards(self):
         return self._guards
 
-    def add_guard(self, condition, update_builder):
-        self.guards.append(self.Guard(condition, update_builder))
+    def add_guard(self, condition, update):
+        self.guards.append(self.Guard(condition, update))
 
     def build(self):
         flatten_guards = list(map(lambda guard: "[{}] {}".format(self._label, str(guard)), self.guards))
